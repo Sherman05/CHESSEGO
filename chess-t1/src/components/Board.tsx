@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
-import { FILES, RANKS, Square, toSquare, isCastle, PieceColor, PieceType } from '../logic/pieces';
+import { FILES, RANKS, Square, toSquare, isCastle, PieceColor, PieceType, boardToSerializable } from '../logic/pieces';
 import type { Piece } from '../logic/pieces';
 import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
@@ -122,28 +122,38 @@ const Board: React.FC = () => {
     const targetSq = getSquareFromPos(e.clientX, e.clientY);
 
     if (!targetSq) {
-      // Dropped outside board - piece disappears
+      // Check if we have a last hovered square to snap to
+      if (dragState.hoveredSquare && dragState.hoveredSquare !== dragState.fromSquare) {
+        // Snap to last hovered square (between-cells case)
+        const snapSq = dragState.hoveredSquare;
+        const snapTarget = board.get(snapSq);
+        if (!snapTarget || snapTarget.color !== dragState.piece.color) {
+          movePiece(dragState.fromSquare, snapSq);
+          setDragState(null);
+          return;
+        }
+      }
+      // No valid snap target — piece disappears (dragged off board)
       removePiece(dragState.fromSquare);
       // Advance turn
       const store = useGameStore.getState();
       const nextTurn = store.currentTurn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
       const nextMoveNumber = nextTurn === PieceColor.WHITE ? store.moveNumber + 1 : store.moveNumber;
+      const indicator = nextTurn === PieceColor.WHITE
+        ? `${nextMoveNumber}. __ хб`
+        : `${nextMoveNumber} … __ хч`;
       useGameStore.setState({
         currentTurn: nextTurn,
         moveNumber: nextMoveNumber,
-        moveIndicator: nextTurn === PieceColor.WHITE
-          ? `${nextMoveNumber}. __ хб`
-          : `${nextMoveNumber} … __ хч`,
+        moveIndicator: indicator,
+        lastMove: { from: dragState.fromSquare, to: null },
       });
       setDragState(null);
       return;
     }
 
     if (targetSq === dragState.fromSquare) {
-      // Clicked same square - select for deletion mode or deselect
-      if (viewMode !== 'start') {
-        setSelectedForDeletion(targetSq);
-      }
+      // Clicked same square — no move, just deselect drag
       setDragState(null);
       return;
     }
@@ -160,18 +170,33 @@ const Board: React.FC = () => {
     const scoutResult = checkScoutCapture(dragState.piece, dragState.fromSquare, targetSq, board);
     if (scoutResult) {
       // Both pieces disappear
-      removePiece(dragState.fromSquare);
-      removePiece(targetSq);
+      const newBoard = new Map(board);
+      newBoard.delete(dragState.fromSquare);
+      newBoard.delete(targetSq);
       const store = useGameStore.getState();
       const nextTurn = store.currentTurn === PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
       const nextMoveNumber = nextTurn === PieceColor.WHITE ? store.moveNumber + 1 : store.moveNumber;
+      const indicator = nextTurn === PieceColor.WHITE
+        ? `${nextMoveNumber}. __ хб`
+        : `${nextMoveNumber} … __ хч`;
+
+      // Record in history
+      const newHistory = store.history.slice(0, store.historyIndex + 1);
+      newHistory.push({
+        board: boardToSerializable(newBoard),
+        moveNumber: nextMoveNumber,
+        currentTurn: nextTurn,
+        indicator,
+      });
+
       useGameStore.setState({
+        board: newBoard,
         currentTurn: nextTurn,
         moveNumber: nextMoveNumber,
         lastMove: { from: dragState.fromSquare, to: targetSq },
-        moveIndicator: nextTurn === PieceColor.WHITE
-          ? `${nextMoveNumber}. __ хб`
-          : `${nextMoveNumber} … __ хч`,
+        moveIndicator: indicator,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
       });
       setDragState(null);
       return;
@@ -259,6 +284,50 @@ const Board: React.FC = () => {
 
   const isSetup = gameStage === 'setup';
 
+  // Handle HTML5 drop from PieceTray (analysis setup)
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    if (gameStage !== 'setup') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, [gameStage]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    if (gameStage !== 'setup') return;
+    e.preventDefault();
+    const data = e.dataTransfer.getData('application/json');
+    if (!data) return;
+
+    try {
+      const piece = JSON.parse(data) as Piece;
+      const sq = getSquareFromPos(e.clientX, e.clientY);
+      if (sq) {
+        const { placePiece } = useGameStore.getState();
+        placePiece(sq, piece);
+      }
+    } catch {
+      // Invalid data
+    }
+  }, [gameStage, getSquareFromPos]);
+
+  // Handle click for piece selection (for deletion) in play mode too
+  const handlePlayClick = useCallback((e: React.MouseEvent) => {
+    if (dragState) return;
+    if (gameMode === 'none') return;
+
+    const sq = getSquareFromPos(e.clientX, e.clientY);
+    if (!sq) {
+      setSelectedForDeletion(null);
+      return;
+    }
+
+    const piece = board.get(sq);
+    if (piece) {
+      setSelectedForDeletion(sq);
+    } else {
+      setSelectedForDeletion(null);
+    }
+  }, [dragState, board, gameMode, getSquareFromPos, setSelectedForDeletion]);
+
   const renderSquare = (file: string, rank: number, colIdx: number, rowIdx: number) => {
     const sq = toSquare(file, rank);
     const piece = board.get(sq);
@@ -332,7 +401,9 @@ const Board: React.FC = () => {
       onMouseDown={isSetup ? handleSetupMouseDown : handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={isSetup ? handleSetupMouseUp : handleMouseUp}
-      onClick={isSetup ? handleClick : undefined}
+      onClick={isSetup ? handleClick : handlePlayClick}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
       {/* Outer border */}
       <div style={{

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
+import { createInitialPosition } from '../logic/pieces';
 
 const BUTTON_STYLE: React.CSSProperties = {
   width: 40,
@@ -40,16 +41,21 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
   const viewMode = getViewMode({ gameMode, gameStage });
   const promotionPending = useGameStore((s) => s.promotionPending);
   const setInitialPosition = useGameStore((s) => s.setInitialPosition);
+  const setBoard = useGameStore((s) => s.setBoard);
 
   const isStart = viewMode === 'start';
   const isPartyActive = gameMode === 'party';
   const isAnalysisActive = gameMode === 'analysis';
   const isSetup = gameStage === 'setup';
 
-  // Frozen states
+  // Frozen states per ТЗ:
+  // Start: Нач.расст frozen. Party/Analysis active.
+  // Basic (Party play): Party frozen+highlighted. Analysis active (ends party).
+  // Basic (Analysis play): Analysis frozen+highlighted. Party active (ends analysis).
+  // Extended (Analysis setup): Party frozen. Analysis frozen.
   const initialPosFrozen = isStart;
   const partyFrozen = isPartyActive || (isAnalysisActive && isSetup);
-  const analysisFrozen = isAnalysisActive || (isPartyActive);
+  const analysisFrozen = isAnalysisActive;
   const minimizeFrozen = !!promotionPending;
 
   return (
@@ -66,7 +72,16 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
       <button
         style={initialPosFrozen ? FROZEN_STYLE : BUTTON_STYLE}
         disabled={initialPosFrozen}
-        onClick={() => !initialPosFrozen && setInitialPosition()}
+        onClick={() => {
+          if (initialPosFrozen) return;
+          if (isSetup) {
+            // In analysis setup: just place initial pieces, stay in setup
+            setBoard(createInitialPosition());
+          } else {
+            // In Party/Analysis play: end session, go to start
+            setInitialPosition();
+          }
+        }}
         title="Начальная расстановка"
       >
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
