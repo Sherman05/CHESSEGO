@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { useGameStore, getViewMode } from '../stores/gameStore';
+import { useGameStore } from '../stores/gameStore';
 import { FILES, RANKS, Square, toSquare, isCastle, PieceColor, PieceType, boardToSerializable } from '../logic/pieces';
 import type { Piece } from '../logic/pieces';
 import PieceComponent, { getPieceSvg } from './Piece';
@@ -47,20 +47,28 @@ const Board: React.FC = () => {
     setPromotionPending,
   } = useGameStore();
 
-  const viewMode = getViewMode({ gameMode, gameStage });
+  // viewMode used indirectly via isSetup
 
-  // Responsive sizing
+  // Responsive sizing — use ResizeObserver for reliable parent tracking
   useEffect(() => {
-    const handleResize = () => {
+    const updateSize = () => {
       if (boardRef.current?.parentElement) {
         const parent = boardRef.current.parentElement;
         const maxSize = Math.min(parent.clientWidth - 20, parent.clientHeight - 20);
         setContainerSize(Math.max(300, maxSize));
       }
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    updateSize();
+
+    const parent = boardRef.current?.parentElement;
+    if (parent && typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(updateSize);
+      ro.observe(parent);
+      return () => ro.disconnect();
+    } else {
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }
   }, []);
 
   const notationSize = containerSize * 0.035;
@@ -125,10 +133,11 @@ const Board: React.FC = () => {
     if (!targetSq) {
       // Check if we have a last hovered square to snap to
       if (dragState.hoveredSquare && dragState.hoveredSquare !== dragState.fromSquare) {
-        // Snap to last hovered square (between-cells case)
         const snapSq = dragState.hoveredSquare;
         const snapTarget = board.get(snapSq);
-        if (!snapTarget || snapTarget.color !== dragState.piece.color) {
+        // Can't snap to own piece or to King
+        if ((!snapTarget || snapTarget.color !== dragState.piece.color) &&
+            !(snapTarget && snapTarget.type === PieceType.KING)) {
           movePiece(dragState.fromSquare, snapSq);
           setDragState(null);
           return;
@@ -232,7 +241,7 @@ const Board: React.FC = () => {
     }
 
     setDragState(null);
-  }, [dragState, board, movePiece, removePiece, getSquareFromPos, viewMode, setSelectedForDeletion, setPromotionPending]);
+  }, [dragState, board, movePiece, removePiece, getSquareFromPos, setPromotionPending]);
 
   // Handle click for piece selection (for deletion)
   const handleClick = useCallback((e: React.MouseEvent) => {

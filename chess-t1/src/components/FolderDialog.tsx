@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface FolderDialogProps {
   onConfirm: (folderName: string) => void;
@@ -7,6 +7,15 @@ interface FolderDialogProps {
 
 const FolderDialog: React.FC<FolderDialogProps> = ({ onConfirm, onCancel }) => {
   const [folderName, setFolderName] = useState('');
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onCancel]);
 
   return (
     <div style={{

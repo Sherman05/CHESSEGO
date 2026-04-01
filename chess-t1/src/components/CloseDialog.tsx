@@ -18,6 +18,15 @@ const CloseDialog: React.FC<CloseDialogProps> = ({ hasActiveSession, onCloseWith
     }
   }, [hasActiveSession, onCloseWithEnd]);
 
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onCancel]);
+
   if (!hasActiveSession) return null;
 
   return (

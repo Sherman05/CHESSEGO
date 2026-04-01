@@ -187,6 +187,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       moveIndicator: indicator,
       promotionPending: null,
       selectedForDeletion: null,
+      trayPieceSelected: null,
     });
   },
 
@@ -204,6 +205,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       promotionPending: null,
       selectedForDeletion: null,
       partyFolder: null,
+      trayPieceSelected: null,
     });
   },
 
@@ -240,6 +242,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       promotionPending: null,
       selectedForDeletion: null,
       partyFolder: null,
+      trayPieceSelected: null,
     });
   },
 
