@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore, getViewMode } from './stores/gameStore';
 import { PieceColor } from './logic/pieces';
 import Board from './components/Board';
@@ -31,7 +31,6 @@ const App: React.FC = () => {
   } = useGameStore();
 
   const viewMode = getViewMode({ gameMode, gameStage });
-  const menuRef = useRef<HTMLDivElement>(null);
 
   // Startup: check for saved session or show intro
   useEffect(() => {
@@ -236,25 +235,25 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Bottom Bar with menu */}
-      <div style={{ position: 'relative', flexShrink: 0 }} ref={menuRef}>
-        {showMenu && (
-          <MenuPopup
-            onClose={() => setShowMenu(false)}
-            onAbout={() => setShowIntroPage(true)}
-            onSavePosition={handleSavePosition}
-            onSavePositionAs={handleSavePosition}
-            onEndParty={handleEndParty}
-            onExit={handleClose}
-          />
-        )}
-        <BottomBar
-          onMenuClick={() => setShowMenu((prev) => !prev)}
-          onResetClick={handleReset}
-          onOkClick={handleOk}
-          onFirstMoveToggle={handleFirstMoveToggle}
+      {/* Bottom Bar */}
+      <BottomBar
+        onMenuClick={() => setShowMenu((prev) => !prev)}
+        onResetClick={handleReset}
+        onOkClick={handleOk}
+        onFirstMoveToggle={handleFirstMoveToggle}
+      />
+
+      {/* Menu popup — rendered at top level to avoid any clipping */}
+      {showMenu && (
+        <MenuPopup
+          onClose={() => setShowMenu(false)}
+          onAbout={() => setShowIntroPage(true)}
+          onSavePosition={handleSavePosition}
+          onSavePositionAs={handleSavePosition}
+          onEndParty={handleEndParty}
+          onExit={handleClose}
         />
-      </div>
+      )}
 
       {/* Resize handle */}
       <div

@@ -2,30 +2,41 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import { createInitialPosition } from '../logic/pieces';
 
-const BUTTON_STYLE: React.CSSProperties = {
-  width: 40,
-  height: 40,
+// Matches design: white circle with dark border
+const CIRCLE_BTN: React.CSSProperties = {
+  width: 36,
+  height: 36,
   borderRadius: '50%',
-  border: '2px solid #1f1203',
-  backgroundColor: 'rgba(179, 179, 179, 0.25)',
+  border: '2px solid #1a1a1a',
+  backgroundColor: '#ffffff',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'all 0.15s',
   padding: 0,
-  position: 'relative',
 };
 
-const FROZEN_STYLE: React.CSSProperties = {
-  ...BUTTON_STYLE,
+const CIRCLE_FROZEN: React.CSSProperties = {
+  ...CIRCLE_BTN,
   opacity: 0.4,
   cursor: 'default',
 };
 
-const ACTIVE_HIGHLIGHT: React.CSSProperties = {
-  backgroundColor: 'rgba(0, 104, 200, 0.3)',
-  boxShadow: '0 0 6px rgba(0, 40, 250, 0.4)',
+// Rectangular mode button base
+const MODE_BTN: React.CSSProperties = {
+  height: 32,
+  borderRadius: 6,
+  border: '1px solid rgba(0,0,0,0.3)',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '0 18px',
+  fontSize: 13,
+  fontWeight: 'bold',
+  fontFamily: 'Arial, sans-serif',
+  transition: 'all 0.15s',
 };
 
 interface TopBarProps {
@@ -48,11 +59,6 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
   const isAnalysisActive = gameMode === 'analysis';
   const isSetup = gameStage === 'setup';
 
-  // Frozen states per ТЗ:
-  // Start: Нач.расст frozen. Party/Analysis active.
-  // Basic (Party play): Party frozen+highlighted. Analysis active (ends party).
-  // Basic (Analysis play): Analysis frozen+highlighted. Party active (ends analysis).
-  // Extended (Analysis setup): Party frozen. Analysis frozen.
   const initialPosFrozen = isStart;
   const partyFrozen = isPartyActive || (isAnalysisActive && isSetup);
   const analysisFrozen = isAnalysisActive;
@@ -63,106 +69,114 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
       display: 'flex',
       alignItems: 'center',
       gap: 6,
-      padding: '4px 8px',
-      backgroundColor: '#4a9ae0',
-      borderRadius: '4px 4px 0 0',
-      minHeight: 48,
+      padding: '5px 8px',
+      background: 'linear-gradient(180deg, #7ec0ee 0%, #4a9ae0 50%, #3a8ad0 100%)',
+      minHeight: 46,
+      flexShrink: 0,
     }}>
-      {/* Initial position */}
+      {/* Нач. расстановка — small square chess icon per mockup */}
       <button
-        style={initialPosFrozen ? FROZEN_STYLE : BUTTON_STYLE}
+        style={{
+          ...(initialPosFrozen ? CIRCLE_FROZEN : CIRCLE_BTN),
+          borderRadius: 4,
+          width: 34,
+          height: 34,
+        }}
         disabled={initialPosFrozen}
         onClick={() => {
           if (initialPosFrozen) return;
           if (isSetup) {
-            // In analysis setup: just place initial pieces, stay in setup
             setBoard(createInitialPosition());
           } else {
-            // In Party/Analysis play: end session, go to start
             setInitialPosition();
           }
         }}
         title="Начальная расстановка"
       >
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="2" y="14" width="18" height="3" rx="1" fill="#333" />
-          <rect x="5" y="6" width="12" height="8" rx="1" fill="#333" />
-          <rect x="8" y="2" width="6" height="4" rx="1" fill="#333" />
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="2" y="2" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+          <rect x="10" y="2" width="8" height="8" fill="#888" stroke="#333" strokeWidth="0.5"/>
+          <rect x="2" y="10" width="8" height="8" fill="#888" stroke="#333" strokeWidth="0.5"/>
+          <rect x="10" y="10" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
         </svg>
       </button>
 
-      <div style={{ width: 1, height: 32, backgroundColor: 'rgba(255,255,255,0.3)' }} />
+      <div style={{ width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.4)' }} />
 
-      {/* Party */}
+      {/* Партия — blue button per mockup */}
       <button
         style={{
-          ...(partyFrozen ? FROZEN_STYLE : BUTTON_STYLE),
-          ...(isPartyActive ? ACTIVE_HIGHLIGHT : {}),
-          borderRadius: 8,
-          width: 'auto',
-          padding: '4px 16px',
+          ...MODE_BTN,
+          backgroundColor: partyFrozen ? '#8ab8d8' : '#0068c8',
+          color: '#ffffff',
+          opacity: partyFrozen ? 0.5 : 1,
+          cursor: partyFrozen ? 'default' : 'pointer',
+          boxShadow: isPartyActive ? '0 0 8px rgba(0,40,250,0.5), inset 0 0 4px rgba(255,255,255,0.3)' : 'none',
+          border: isPartyActive ? '2px solid #0028fa' : '1px solid rgba(0,0,0,0.3)',
         }}
         disabled={partyFrozen}
         onClick={onPartyClick}
         title="Партия"
       >
-        <span style={{ fontSize: 13, fontWeight: 'bold', color: '#1a1a1a' }}>Партия</span>
+        Партия
       </button>
 
-      {/* Analysis */}
+      {/* Анализ — red/distinct button per mockup */}
       <button
         style={{
-          ...(analysisFrozen ? FROZEN_STYLE : BUTTON_STYLE),
-          ...(isAnalysisActive ? ACTIVE_HIGHLIGHT : {}),
-          borderRadius: 8,
-          width: 'auto',
-          padding: '4px 16px',
+          ...MODE_BTN,
+          backgroundColor: analysisFrozen ? '#d89898' : '#c83030',
+          color: '#ffffff',
+          opacity: analysisFrozen ? 0.5 : 1,
+          cursor: analysisFrozen ? 'default' : 'pointer',
+          boxShadow: isAnalysisActive ? '0 0 8px rgba(200,48,48,0.5), inset 0 0 4px rgba(255,255,255,0.3)' : 'none',
+          border: isAnalysisActive ? '2px solid #a02020' : '1px solid rgba(0,0,0,0.3)',
         }}
         disabled={analysisFrozen}
         onClick={onAnalysisClick}
         title="Анализ"
       >
-        <span style={{ fontSize: 13, fontWeight: 'bold', color: '#1a1a1a' }}>Анализ</span>
+        Анализ
       </button>
 
       <div style={{ flex: 1 }} />
 
-      {/* Minimize */}
+      {/* Свернуть — white circle, blue dash */}
       <button
-        style={minimizeFrozen ? FROZEN_STYLE : BUTTON_STYLE}
+        style={minimizeFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={minimizeFrozen}
         onClick={onMinimize}
         title="Свернуть"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <line x1="4" y1="13" x2="14" y2="13" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <line x1="3" y1="12" x2="13" y2="12" stroke="#0028fa" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* Always on top */}
+      {/* Поверх всех окон — white circle, blue squares */}
       <button
         style={{
-          ...BUTTON_STYLE,
-          ...(alwaysOnTop ? ACTIVE_HIGHLIGHT : {}),
+          ...CIRCLE_BTN,
+          ...(alwaysOnTop ? { backgroundColor: '#d0e8ff', boxShadow: '0 0 6px rgba(0,40,250,0.4)' } : {}),
         }}
         onClick={onAlwaysOnTop}
         title="Поверх всех окон"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <rect x="3" y="3" width="9" height="9" rx="1" fill="none" stroke="#333" strokeWidth="1.5" />
-          <rect x="6" y="6" width="9" height="9" rx="1" fill="rgba(179,179,179,0.5)" stroke="#333" strokeWidth="1.5" />
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <rect x="2" y="2" width="8" height="8" rx="1" fill="none" stroke="#0028fa" strokeWidth="1.5" />
+          <rect x="5" y="5" width="8" height="8" rx="1" fill="rgba(0,40,250,0.1)" stroke="#0028fa" strokeWidth="1.5" />
         </svg>
       </button>
 
-      {/* Close */}
+      {/* Закрыть — white circle, red X */}
       <button
-        style={{ ...BUTTON_STYLE, backgroundColor: 'rgba(220, 50, 50, 0.2)' }}
+        style={{ ...CIRCLE_BTN }}
         onClick={onClose}
         title="Закрыть"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <line x1="4" y1="4" x2="14" y2="14" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="14" y1="4" x2="4" y2="14" stroke="#333" strokeWidth="2.5" strokeLinecap="round" />
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <line x1="3" y1="3" x2="13" y2="13" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="13" y1="3" x2="3" y2="13" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
       </button>
     </div>

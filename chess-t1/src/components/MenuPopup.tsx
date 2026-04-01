@@ -27,24 +27,28 @@ const MenuPopup: React.FC<MenuPopupProps> = ({ onClose, onAbout, onSavePosition,
 
   return (
     <>
+      {/* Backdrop to close on outside click */}
       <div
         style={{
           position: 'fixed',
           inset: 0,
-          zIndex: 149,
+          zIndex: 9998,
         }}
         onClick={onClose}
       />
+      {/* Menu popup — fixed position, opens UPWARD from bottom-left corner.
+          Per ТЗ: "Меню не перекрывает игровое поле — раскрывается влево за пределы окна ГИ"
+          Using fixed positioning to avoid any overflow clipping. */}
       <div style={{
-        position: 'absolute',
-        bottom: 46,
-        left: -180,
-        width: 200,
+        position: 'fixed',
+        bottom: 54,
+        left: 8,
+        width: 210,
         backgroundColor: '#f5f5f5',
         border: '2px solid #0028fa',
         borderRadius: 6,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-        zIndex: 150,
+        boxShadow: '0 -4px 16px rgba(0,0,0,0.3)',
+        zIndex: 9999,
         overflow: 'hidden',
       }}>
         {items.map((item, i) => (
@@ -72,7 +76,7 @@ const MenuPopup: React.FC<MenuPopupProps> = ({ onClose, onAbout, onSavePosition,
             }}
             onMouseEnter={(e) => {
               if (!item.frozen) {
-                (e.target as HTMLElement).style.backgroundColor = '#e0e8f0';
+                (e.target as HTMLElement).style.backgroundColor = '#d0e0f0';
               }
             }}
             onMouseLeave={(e) => {
