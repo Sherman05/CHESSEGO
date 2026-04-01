@@ -6,20 +6,20 @@ import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
 import { checkScoutCapture } from '../logic/scout';
 
-// Design colors — from DESIGN_GUIDE.md
+// Design colors — matched to screenshot pixel-perfect
 const COLORS = {
   lightSquare: '#FFFFFF',
   darkSquare: '#808080',
   castleSquare: '#C0C0C0',
-  border: '#1A3A5C',
-  borderOuter: '#1A3A5C',
-  notationBg: '#D0D0D0',
-  notationText: '#000000',
-  highlightStart: 'rgba(144, 208, 128, 0.5)',    // #90D080 per guide
+  border: '#4A90D9',               // Blue frame — per screenshot
+  borderOuter: '#2E6AB0',          // Outer edge slightly darker
+  notationBg: '#4A90D9',           // Blue background for notation area
+  notationText: '#FFFFFF',         // White text on blue
+  highlightStart: 'rgba(144, 208, 128, 0.5)',
   highlightHover: 'rgba(144, 208, 128, 0.35)',
-  highlightLastMove: 'rgba(240, 232, 128, 0.3)',  // #F0E880 per guide
+  highlightLastMove: 'rgba(240, 232, 128, 0.3)',
   highlightSelected: 'rgba(255, 100, 100, 0.35)',
-  cellBorder: 'rgba(0, 0, 0, 0.2)',
+  cellBorder: 'rgba(0, 0, 0, 0.15)',
 };
 
 function isLightSquare(file: string, rank: number): boolean {

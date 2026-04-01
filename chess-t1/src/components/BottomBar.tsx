@@ -2,36 +2,24 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import MoveIndicator from './MoveIndicator';
 
-// Silver gradient circle button — 32px diameter, dark border per DESIGN_GUIDE
-const CIRCLE_BTN: React.CSSProperties = {
-  width: 32,
-  height: 32,
+/* Small gray circle — per screenshot bottom bar */
+const GRAY_CIRCLE: React.CSSProperties = {
+  width: 28,
+  height: 28,
   borderRadius: '50%',
-  border: '1.5px solid #555',
-  background: 'linear-gradient(180deg, #e0e4e8 0%, #b0b8c0 100%)',
+  border: '1.5px solid #777',
+  backgroundColor: '#c8c8c8',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'filter 0.15s',
   padding: 0,
 };
 
-// Frozen: opacity 0.4, cursor not-allowed per DESIGN_GUIDE
-const CIRCLE_FROZEN: React.CSSProperties = {
-  ...CIRCLE_BTN,
+const GRAY_CIRCLE_FROZEN: React.CSSProperties = {
+  ...GRAY_CIRCLE,
   opacity: 0.4,
   cursor: 'not-allowed',
-};
-
-// Hover handler — brightness(1.15) per DESIGN_GUIDE
-const hoverOn = (e: React.MouseEvent<HTMLButtonElement>) => {
-  if (!(e.currentTarget as HTMLButtonElement).disabled) {
-    e.currentTarget.style.filter = 'brightness(1.15)';
-  }
-};
-const hoverOff = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.currentTarget.style.filter = '';
 };
 
 interface BottomBarProps {
@@ -54,7 +42,6 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
   const isSetup = gameStage === 'setup';
   const isExtended = viewMode === 'extended';
 
-  // Freeze logic per DESIGN_GUIDE — DO NOT CHANGE
   const prevFrozen = isStart || isSetup || historyIndex <= 0;
   const nextFrozen = isStart || isSetup || historyIndex >= history.length - 1;
   const reverseFrozen = isStart;
@@ -66,97 +53,98 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
       alignItems: 'center',
       gap: 6,
       padding: '4px 8px',
-      background: 'linear-gradient(180deg, #C0C8D0 0%, #B0B8C0 100%)',
+      backgroundColor: '#A0A8B0',
       minHeight: 40,
       flexShrink: 0,
     }}>
-      {/* 1. Ok — circle with "Ok" text (ONLY in extended view) */}
+      {/* Ok — only in extended view, blue text in circle */}
       {isExtended && (
         <button
-          style={CIRCLE_BTN}
+          style={{
+            ...GRAY_CIRCLE,
+            width: 32,
+            height: 32,
+            backgroundColor: '#d0d0d0',
+            border: '2px solid #666',
+          }}
           onClick={onOkClick}
-          onMouseEnter={hoverOn}
-          onMouseLeave={hoverOff}
           title="Готово"
         >
-          <span style={{ fontSize: 12, fontWeight: 'bold', color: '#0028fa', fontFamily: 'serif' }}>Ok</span>
+          <span style={{ fontSize: 13, fontWeight: 'bold', color: '#0040c0', fontFamily: 'serif' }}>Ok</span>
         </button>
       )}
 
-      {/* 2. Меню — circle with 3 horizontal lines (☰) */}
+      {/* Меню — oval/elongated gray button with 3 blue lines per screenshot */}
       <button
-        style={CIRCLE_BTN}
+        style={{
+          width: 40,
+          height: 30,
+          borderRadius: 15,
+          border: '1.5px solid #666',
+          backgroundColor: '#b8c0c8',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 0,
+        }}
         onClick={onMenuClick}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Меню"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <line x1="3" y1="4" x2="13" y2="4" stroke="#333" strokeWidth="2" strokeLinecap="round" />
-          <line x1="3" y1="8" x2="13" y2="8" stroke="#333" strokeWidth="2" strokeLinecap="round" />
-          <line x1="3" y1="12" x2="13" y2="12" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+        <svg width="20" height="16" viewBox="0 0 20 16">
+          <line x1="4" y1="3" x2="16" y2="3" stroke="#0040c0" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="4" y1="8" x2="16" y2="8" stroke="#0040c0" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="4" y1="13" x2="16" y2="13" stroke="#0040c0" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* 3. Move Indicator — text field, NOT button (only in basic view) */}
+      {/* Move Indicator */}
       {viewMode === 'basic' && <MoveIndicator />}
 
-      {/* Extended: Сброс button */}
+      {/* Extended: Сброс */}
       {isExtended && (
-        <button
-          style={CIRCLE_BTN}
-          onClick={onResetClick}
-          onMouseEnter={hoverOn}
-          onMouseLeave={hoverOff}
-          title="Сброс"
-        >
+        <button style={GRAY_CIRCLE} onClick={onResetClick} title="Сброс">
           <svg width="14" height="14" viewBox="0 0 14 14">
-            <path d="M3 7a4 4 0 1 1 1 2.6" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M3 4v3h3" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M3 7a4 4 0 1 1 1 2.6" fill="none" stroke="#444" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M3 4v3h3" fill="none" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       )}
 
-      {/* 4. Flex spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* 5. Предыдущий ход — circle with double arrow left («) */}
+      {/* Prev move — small gray circle */}
       <button
-        style={prevFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
+        style={prevFrozen ? GRAY_CIRCLE_FROZEN : GRAY_CIRCLE}
         disabled={prevFrozen}
         onClick={prevMove}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Предыдущий ход"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14">
-          <path d="M8 3L4 7l4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M12 3L8 7l4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <path d="M8 2L3 6l5 4" fill="none" stroke="#444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {/* 6. Следующий ход — circle with double arrow right (») */}
+      {/* Next move — small gray circle */}
       <button
-        style={nextFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
+        style={nextFrozen ? GRAY_CIRCLE_FROZEN : GRAY_CIRCLE}
         disabled={nextFrozen}
         onClick={nextMove}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Следующий ход"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14">
-          <path d="M2 3l4 4-4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M6 3l4 4-4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <path d="M4 2l5 4-5 4" fill="none" stroke="#444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {/* 7. Удалить фигуру — circle with X-in-circle (⊗), blue tint */}
+      {/* Удалить фигуру — blue circle with X per screenshot */}
       <button
-        style={deleteFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
+        style={{
+          ...GRAY_CIRCLE,
+          ...(deleteFrozen ? { opacity: 0.4, cursor: 'not-allowed' } : {}),
+        }}
         disabled={deleteFrozen}
         onClick={deleteSelectedPiece}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Удалить фигуру"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
@@ -166,20 +154,16 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </svg>
       </button>
 
-      {/* 8. Реверс — circle with circular arrows (↻) */}
+      {/* Реверс — gray circle with arrows */}
       <button
-        style={reverseFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
+        style={reverseFrozen ? GRAY_CIRCLE_FROZEN : GRAY_CIRCLE}
         disabled={reverseFrozen}
         onClick={toggleReverse}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Перевернуть доску"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
-          <path d="M10.5 4.5A4 4 0 0 0 3.5 5" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M3.5 9.5A4 4 0 0 0 10.5 9" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M5.5 3L3.5 5l2 2" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M8.5 11L10.5 9l-2-2" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3 5l4-2.5L11 5" fill="none" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M11 9l-4 2.5L3 9" fill="none" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>
