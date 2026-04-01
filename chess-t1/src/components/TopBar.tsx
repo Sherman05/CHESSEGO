@@ -2,48 +2,24 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import { createInitialPosition } from '../logic/pieces';
 
-// Circular button — 32px diameter, silver gradient bg, dark border per DESIGN_GUIDE
-const CIRCLE_BTN: React.CSSProperties = {
-  width: 32,
-  height: 32,
+/* Small gray circle button — per screenshot: Свернуть, Поверх, Закрыть */
+const SMALL_CIRCLE: React.CSSProperties = {
+  width: 28,
+  height: 28,
   borderRadius: '50%',
-  border: '1.5px solid #555',
-  background: 'linear-gradient(180deg, #e0e4e8 0%, #b0b8c0 100%)',
+  border: '1.5px solid #777',
+  backgroundColor: '#c8c8c8',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'filter 0.15s',
   padding: 0,
 };
 
-// Frozen: opacity 0.4, cursor not-allowed per DESIGN_GUIDE
-const CIRCLE_FROZEN: React.CSSProperties = {
-  ...CIRCLE_BTN,
+const SMALL_CIRCLE_FROZEN: React.CSSProperties = {
+  ...SMALL_CIRCLE,
   opacity: 0.4,
   cursor: 'not-allowed',
-};
-
-// Rectangular button base
-const RECT_BTN: React.CSSProperties = {
-  height: 30,
-  borderRadius: 4,
-  padding: '0 16px',
-  fontSize: 13,
-  fontWeight: 'bold',
-  fontFamily: 'Arial, sans-serif',
-  cursor: 'pointer',
-  transition: 'filter 0.15s',
-};
-
-// Hover handler — brightness(1.15) per DESIGN_GUIDE
-const hoverOn = (e: React.MouseEvent<HTMLButtonElement>) => {
-  if (!(e.currentTarget as HTMLButtonElement).disabled) {
-    e.currentTarget.style.filter = 'brightness(1.15)';
-  }
-};
-const hoverOff = (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.currentTarget.style.filter = '';
 };
 
 interface TopBarProps {
@@ -66,7 +42,6 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
   const isAnalysisActive = gameMode === 'analysis';
   const isSetup = gameStage === 'setup';
 
-  // Freeze logic per DESIGN_GUIDE — DO NOT CHANGE
   const initialPosFrozen = isStart;
   const partyFrozen = isPartyActive || (isAnalysisActive && isSetup);
   const analysisFrozen = isAnalysisActive;
@@ -76,128 +51,129 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: 6,
-      padding: '4px 8px',
-      background: 'linear-gradient(180deg, #C8D0D8 0%, #A8B4C0 100%)',
-      minHeight: 40,
+      gap: 4,
+      padding: '3px 6px',
+      backgroundColor: '#B8C0C8',
+      minHeight: 38,
       flexShrink: 0,
     }}>
-      {/* 1. Нач.расстановка — chess board 2×2 icon (black-white squares) */}
+      {/* Нач.расстановка — rectangular text button with small chess icon per screenshot */}
       <button
         style={{
-          ...(initialPosFrozen ? CIRCLE_FROZEN : CIRCLE_BTN),
-          borderRadius: 4,
-          width: 32,
-          height: 32,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          height: 28,
+          padding: '0 8px',
+          borderRadius: 3,
+          border: '1px solid #888',
+          backgroundColor: initialPosFrozen ? '#a8a8a8' : '#d0d0d0',
+          cursor: initialPosFrozen ? 'not-allowed' : 'pointer',
+          opacity: initialPosFrozen ? 0.5 : 1,
+          fontSize: 10,
+          fontFamily: 'Arial, sans-serif',
+          color: '#1a1a1a',
         }}
         disabled={initialPosFrozen}
         onClick={() => {
           if (initialPosFrozen) return;
-          if (isSetup) {
-            setBoard(createInitialPosition());
-          } else {
-            setInitialPosition();
-          }
+          if (isSetup) { setBoard(createInitialPosition()); } else { setInitialPosition(); }
         }}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Начальная расстановка"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18">
-          <rect x="1" y="1" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
-          <rect x="9" y="1" width="8" height="8" fill="#666" stroke="#333" strokeWidth="0.5"/>
-          <rect x="1" y="9" width="8" height="8" fill="#666" stroke="#333" strokeWidth="0.5"/>
-          <rect x="9" y="9" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+        <svg width="14" height="14" viewBox="0 0 14 14" style={{ flexShrink: 0 }}>
+          <rect x="0" y="0" width="7" height="7" fill="#fff" stroke="#555" strokeWidth="0.5"/>
+          <rect x="7" y="0" width="7" height="7" fill="#555" stroke="#555" strokeWidth="0.5"/>
+          <rect x="0" y="7" width="7" height="7" fill="#555" stroke="#555" strokeWidth="0.5"/>
+          <rect x="7" y="7" width="7" height="7" fill="#fff" stroke="#555" strokeWidth="0.5"/>
         </svg>
+        <span style={{ lineHeight: 1.1 }}>Начальная<br/>расстановка</span>
       </button>
 
-      {/* 2. Партия — rectangular, dark blue bg #2B4C7E, white text */}
+      {/* Партия — dark blue, wide, white text */}
       <button
         style={{
-          ...RECT_BTN,
+          height: 30,
+          borderRadius: 4,
           border: '1px solid #1a3050',
           backgroundColor: '#2B4C7E',
-          color: '#FFFFFF',
-          opacity: partyFrozen ? 0.4 : 1,
+          color: '#fff',
+          padding: '0 24px',
+          fontSize: 14,
+          fontWeight: 'bold',
+          fontFamily: 'Arial, sans-serif',
           cursor: partyFrozen ? 'not-allowed' : 'pointer',
+          opacity: partyFrozen ? 0.4 : 1,
           boxShadow: isPartyActive ? 'inset 0 0 6px rgba(255,255,255,0.3)' : 'none',
         }}
         disabled={partyFrozen}
         onClick={onPartyClick}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Партия"
       >
         Партия
       </button>
 
-      {/* 3. Анализ — rectangular, blue bg #4A90D9, white text */}
+      {/* Анализ — blue, wide, white text */}
       <button
         style={{
-          ...RECT_BTN,
+          height: 30,
+          borderRadius: 4,
           border: '1px solid #2a6ab0',
           backgroundColor: '#4A90D9',
-          color: '#FFFFFF',
-          opacity: analysisFrozen ? 0.4 : 1,
+          color: '#fff',
+          padding: '0 24px',
+          fontSize: 14,
+          fontWeight: 'bold',
+          fontFamily: 'Arial, sans-serif',
           cursor: analysisFrozen ? 'not-allowed' : 'pointer',
+          opacity: analysisFrozen ? 0.4 : 1,
           boxShadow: isAnalysisActive ? 'inset 0 0 6px rgba(255,255,255,0.3)' : 'none',
         }}
         disabled={analysisFrozen}
         onClick={onAnalysisClick}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Анализ"
       >
         Анализ
       </button>
 
-      {/* 4. Flex spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* 5. Свернуть — circle, horizontal line (—) */}
+      {/* Свернуть — small gray circle */}
       <button
-        style={minimizeFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
+        style={minimizeFrozen ? SMALL_CIRCLE_FROZEN : SMALL_CIRCLE}
         disabled={minimizeFrozen}
         onClick={onMinimize}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Свернуть"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14">
-          <line x1="3" y1="7" x2="11" y2="7" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <line x1="3" y1="8" x2="9" y2="8" stroke="#444" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* 6. Поверх всех окон — circle, chess texture pattern */}
+      {/* Поверх всех окон — small gray circle */}
       <button
         style={{
-          ...CIRCLE_BTN,
-          ...(alwaysOnTop ? { background: 'linear-gradient(180deg, #d0e8ff 0%, #a0c8e8 100%)' } : {}),
+          ...SMALL_CIRCLE,
+          ...(alwaysOnTop ? { backgroundColor: '#a0c0e0' } : {}),
         }}
         onClick={onAlwaysOnTop}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Поверх всех окон"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <rect x="2" y="2" width="5" height="5" fill="#666" />
-          <rect x="7" y="2" width="5" height="5" fill="#ccc" />
-          <rect x="2" y="7" width="5" height="5" fill="#ccc" />
-          <rect x="7" y="7" width="5" height="5" fill="#666" />
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <rect x="1" y="1" width="6" height="6" fill="none" stroke="#444" strokeWidth="1.5" />
+          <rect x="4" y="4" width="6" height="6" fill="#ddd" stroke="#444" strokeWidth="1.5" />
         </svg>
       </button>
 
-      {/* 7. Закрыть — circle, X cross */}
+      {/* Закрыть — small gray circle */}
       <button
-        style={CIRCLE_BTN}
+        style={SMALL_CIRCLE}
         onClick={onClose}
-        onMouseEnter={hoverOn}
-        onMouseLeave={hoverOff}
         title="Закрыть"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14">
-          <line x1="3" y1="3" x2="11" y2="11" stroke="#333" strokeWidth="2" strokeLinecap="round" />
-          <line x1="11" y1="3" x2="3" y2="11" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <line x1="2" y1="2" x2="10" y2="10" stroke="#444" strokeWidth="2" strokeLinecap="round" />
+          <line x1="10" y1="2" x2="2" y2="10" stroke="#444" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
     </div>
