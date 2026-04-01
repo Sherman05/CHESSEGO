@@ -6,19 +6,20 @@ import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
 import { checkScoutCapture } from '../logic/scout';
 
-// Design colors
+// Design colors — matched to screenshot
 const COLORS = {
   lightSquare: '#ffffff',
-  darkSquare: '#b0b0b0',
-  castleSquare: '#d8d8d8',
-  border: '#0068c8',
-  borderOuter: '#0028fa',
+  darkSquare: '#b8b8b8',
+  castleSquare: '#dcdcdc',
+  border: '#1060d0',
+  borderOuter: '#0040ee',
   notation: '#ffffff',
   highlightStart: 'rgba(100, 180, 255, 0.45)',
   highlightHover: 'rgba(100, 180, 255, 0.35)',
   highlightLastMove: 'rgba(100, 180, 255, 0.2)',
   highlightSelected: 'rgba(255, 100, 100, 0.35)',
-  cellBorder: 'rgba(0, 0, 0, 0.35)',
+  cellBorder: 'rgba(0, 0, 0, 0.25)',
+  gridLine: 'rgba(80, 160, 255, 0.3)',
 };
 
 function isLightSquare(file: string, rank: number): boolean {
@@ -63,7 +64,7 @@ const Board: React.FC = () => {
   }, []);
 
   const notationSize = containerSize * 0.04;
-  const borderSize = containerSize * 0.01;
+  const borderSize = containerSize * 0.025; // thicker blue border per screenshot
   const boardSize = containerSize - (notationSize + borderSize) * 2;
   const cellSize = boardSize / 8;
 
@@ -362,7 +363,8 @@ const Board: React.FC = () => {
           width: cellSize,
           height: cellSize,
           backgroundColor: bgColor,
-          border: `0.5px solid ${COLORS.cellBorder}`,
+          borderRight: `1px solid ${COLORS.gridLine}`,
+          borderBottom: `1px solid ${COLORS.cellBorder}`,
           boxSizing: 'border-box',
         }}
       >
@@ -409,8 +411,8 @@ const Board: React.FC = () => {
       <div style={{
         position: 'absolute',
         inset: 0,
-        border: `${borderSize * 2}px solid ${COLORS.borderOuter}`,
-        borderRadius: 4,
+        border: `${borderSize * 1.5}px solid ${COLORS.borderOuter}`,
+        borderRadius: 3,
         pointerEvents: 'none',
         zIndex: 5,
       }} />

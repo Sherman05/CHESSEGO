@@ -2,12 +2,12 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import { createInitialPosition } from '../logic/pieces';
 
-// Matches design: white circle with dark border
+// Large white circle with thick dark border — per screenshot
 const CIRCLE_BTN: React.CSSProperties = {
-  width: 36,
-  height: 36,
+  width: 44,
+  height: 44,
   borderRadius: '50%',
-  border: '2px solid #1a1a1a',
+  border: '2.5px solid #1a1a1a',
   backgroundColor: '#ffffff',
   cursor: 'pointer',
   display: 'flex',
@@ -21,22 +21,6 @@ const CIRCLE_FROZEN: React.CSSProperties = {
   ...CIRCLE_BTN,
   opacity: 0.4,
   cursor: 'default',
-};
-
-// Rectangular mode button base
-const MODE_BTN: React.CSSProperties = {
-  height: 32,
-  borderRadius: 6,
-  border: '1px solid rgba(0,0,0,0.3)',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '0 18px',
-  fontSize: 13,
-  fontWeight: 'bold',
-  fontFamily: 'Arial, sans-serif',
-  transition: 'all 0.15s',
 };
 
 interface TopBarProps {
@@ -68,19 +52,19 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: 6,
-      padding: '5px 8px',
-      background: 'linear-gradient(180deg, #7ec0ee 0%, #4a9ae0 50%, #3a8ad0 100%)',
-      minHeight: 46,
+      gap: 8,
+      padding: '6px 10px',
+      background: 'linear-gradient(180deg, #9dd0f0 0%, #6ab4e8 50%, #4a9ae0 100%)',
+      minHeight: 54,
       flexShrink: 0,
     }}>
-      {/* Нач. расстановка — small square chess icon per mockup */}
+      {/* Нач. расстановка — chess piece icon per screenshot */}
       <button
         style={{
           ...(initialPosFrozen ? CIRCLE_FROZEN : CIRCLE_BTN),
-          borderRadius: 4,
-          width: 34,
-          height: 34,
+          borderRadius: 8,
+          width: 42,
+          height: 42,
         }}
         disabled={initialPosFrozen}
         onClick={() => {
@@ -93,26 +77,29 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
         }}
         title="Начальная расстановка"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <rect x="2" y="2" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
-          <rect x="10" y="2" width="8" height="8" fill="#888" stroke="#333" strokeWidth="0.5"/>
-          <rect x="2" y="10" width="8" height="8" fill="#888" stroke="#333" strokeWidth="0.5"/>
-          <rect x="10" y="10" width="8" height="8" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+        <svg width="24" height="24" viewBox="0 0 24 24">
+          <path d="M7 20h10v-2H7v2zm-1-4h12l-1.5-6h-9L7 16zm3.5-8h3V6h2V4h-2V2h-3v2h-2v2h2v2z"
+            fill="#1a1a1a" stroke="none"/>
         </svg>
       </button>
 
-      <div style={{ width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.4)' }} />
+      <div style={{ width: 1, height: 36, backgroundColor: 'rgba(0,0,0,0.15)' }} />
 
-      {/* Партия — blue button per mockup */}
+      {/* Партия — WHITE background, dark text, dark border per screenshot */}
       <button
         style={{
-          ...MODE_BTN,
-          backgroundColor: partyFrozen ? '#8ab8d8' : '#0068c8',
-          color: '#ffffff',
-          opacity: partyFrozen ? 0.5 : 1,
+          height: 38,
+          borderRadius: 6,
+          border: '2.5px solid #1a1a1a',
+          backgroundColor: partyFrozen ? '#e8e8e8' : '#ffffff',
+          color: '#1a1a1a',
           cursor: partyFrozen ? 'default' : 'pointer',
-          boxShadow: isPartyActive ? '0 0 8px rgba(0,40,250,0.5), inset 0 0 4px rgba(255,255,255,0.3)' : 'none',
-          border: isPartyActive ? '2px solid #0028fa' : '1px solid rgba(0,0,0,0.3)',
+          opacity: partyFrozen ? 0.5 : 1,
+          padding: '0 22px',
+          fontSize: 15,
+          fontWeight: 'bold',
+          fontFamily: 'Arial, sans-serif',
+          boxShadow: isPartyActive ? '0 0 8px rgba(0,40,250,0.4), inset 0 0 6px rgba(0,100,200,0.2)' : 'none',
         }}
         disabled={partyFrozen}
         onClick={onPartyClick}
@@ -121,16 +108,21 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
         Партия
       </button>
 
-      {/* Анализ — red/distinct button per mockup */}
+      {/* Анализ — BLUE background, white text per screenshot */}
       <button
         style={{
-          ...MODE_BTN,
-          backgroundColor: analysisFrozen ? '#d89898' : '#c83030',
+          height: 38,
+          borderRadius: 6,
+          border: '2.5px solid #1a1a1a',
+          backgroundColor: analysisFrozen ? '#8ab8d8' : '#0068c8',
           color: '#ffffff',
-          opacity: analysisFrozen ? 0.5 : 1,
           cursor: analysisFrozen ? 'default' : 'pointer',
-          boxShadow: isAnalysisActive ? '0 0 8px rgba(200,48,48,0.5), inset 0 0 4px rgba(255,255,255,0.3)' : 'none',
-          border: isAnalysisActive ? '2px solid #a02020' : '1px solid rgba(0,0,0,0.3)',
+          opacity: analysisFrozen ? 0.5 : 1,
+          padding: '0 22px',
+          fontSize: 15,
+          fontWeight: 'bold',
+          fontFamily: 'Arial, sans-serif',
+          boxShadow: isAnalysisActive ? '0 0 8px rgba(0,40,250,0.5), inset 0 0 6px rgba(255,255,255,0.2)' : 'none',
         }}
         disabled={analysisFrozen}
         onClick={onAnalysisClick}
@@ -141,19 +133,19 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
 
       <div style={{ flex: 1 }} />
 
-      {/* Свернуть — white circle, blue dash */}
+      {/* Свернуть */}
       <button
         style={minimizeFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={minimizeFrozen}
         onClick={onMinimize}
         title="Свернуть"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <line x1="3" y1="12" x2="13" y2="12" stroke="#0028fa" strokeWidth="2.5" strokeLinecap="round" />
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <line x1="5" y1="14" x2="15" y2="14" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* Поверх всех окон — white circle, blue squares */}
+      {/* Поверх всех окон */}
       <button
         style={{
           ...CIRCLE_BTN,
@@ -162,21 +154,21 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
         onClick={onAlwaysOnTop}
         title="Поверх всех окон"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <rect x="2" y="2" width="8" height="8" rx="1" fill="none" stroke="#0028fa" strokeWidth="1.5" />
-          <rect x="5" y="5" width="8" height="8" rx="1" fill="rgba(0,40,250,0.1)" stroke="#0028fa" strokeWidth="1.5" />
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="3" y="3" width="9" height="9" rx="1" fill="none" stroke="#1a1a1a" strokeWidth="2" />
+          <rect x="7" y="7" width="9" height="9" rx="1" fill="#fff" stroke="#1a1a1a" strokeWidth="2" />
         </svg>
       </button>
 
-      {/* Закрыть — white circle, red X */}
+      {/* Закрыть */}
       <button
-        style={{ ...CIRCLE_BTN }}
+        style={CIRCLE_BTN}
         onClick={onClose}
         title="Закрыть"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <line x1="3" y1="3" x2="13" y2="13" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="13" y1="3" x2="3" y2="13" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <line x1="5" y1="5" x2="15" y2="15" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+          <line x1="15" y1="5" x2="5" y2="15" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
         </svg>
       </button>
     </div>

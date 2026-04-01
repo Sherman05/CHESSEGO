@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  PieceType, PieceColor, FILES, RANKS,
+  PieceType, PieceColor, FILES,
   createInitialPosition, cloneBoard, toSquare, parseSquare,
   isCastle, isWhiteCastle, isBlackCastle,
   boardToSerializable, boardFromSerializable,
