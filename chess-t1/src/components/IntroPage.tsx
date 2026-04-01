@@ -46,13 +46,13 @@ const INTRO_TEXT = `Как пользоваться программой ГИ ch
 Перемещение фигур:
 Нажмите и удерживайте левую кнопку мыши на фигуре, перетащите на нужную клетку и отпустите. Фигура автоматически встанет в центр клетки.`;
 
-// White circle window button — per intro page mockup
+// Silver gradient circle button
 const WIN_BTN: React.CSSProperties = {
-  width: 30,
-  height: 30,
+  width: 28,
+  height: 28,
   borderRadius: '50%',
-  border: '2px solid #1a1a1a',
-  backgroundColor: '#ffffff',
+  border: '1.5px solid #555',
+  background: 'linear-gradient(180deg, #e0e4e8 0%, #b0b8c0 100%)',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
@@ -67,46 +67,47 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      background: 'linear-gradient(180deg, #7ec0ee 0%, #4a9ae0 40%, #3a8ad0 100%)',
+      background: 'linear-gradient(180deg, #4A90D9 0%, #2E6AB0 100%)',
       overflow: 'hidden',
     }}>
       {/* Top controls row */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '8px 10px',
+        padding: '6px 8px',
         gap: 8,
+        background: 'linear-gradient(180deg, #C8D0D8 0%, #A8B4C0 100%)',
       }}>
-        {/* Program symbol (decorative) — chess board icon per mockup */}
+        {/* Program symbol (decorative chess board) */}
         <div style={{
-          width: 34,
-          height: 34,
+          width: 30,
+          height: 30,
           borderRadius: 3,
-          border: '1px solid rgba(0,0,0,0.3)',
+          border: '1px solid #888',
           backgroundColor: '#fff',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <svg width="22" height="22" viewBox="0 0 22 22">
-            <rect x="1" y="1" width="10" height="10" fill="#fff" stroke="#333" strokeWidth="0.5"/>
-            <rect x="11" y="1" width="10" height="10" fill="#888" stroke="#333" strokeWidth="0.5"/>
-            <rect x="1" y="11" width="10" height="10" fill="#888" stroke="#333" strokeWidth="0.5"/>
-            <rect x="11" y="11" width="10" height="10" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+          <svg width="20" height="20" viewBox="0 0 20 20">
+            <rect x="1" y="1" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+            <rect x="10" y="1" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5"/>
+            <rect x="1" y="10" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5"/>
+            <rect x="10" y="10" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5"/>
           </svg>
         </div>
 
-        {/* "Основной режим" — blue oval pill button per mockup */}
+        {/* "Основной режим" — blue button per guide */}
         <button
           onClick={onEnterMain}
           style={{
-            padding: '6px 22px',
-            backgroundColor: '#0068c8',
+            padding: '5px 18px',
+            backgroundColor: '#4A90D9',
             color: '#ffffff',
-            border: '2px solid #0028fa',
-            borderRadius: 18,
-            fontSize: 14,
+            border: '1px solid #2a6ab0',
+            borderRadius: 4,
+            fontSize: 13,
             fontWeight: 'bold',
             fontFamily: 'Arial, sans-serif',
             cursor: 'pointer',
@@ -117,40 +118,40 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
 
         <div style={{ flex: 1 }} />
 
-        {/* Window controls — white circles per mockup */}
+        {/* Window controls */}
         <button onClick={onMinimize} style={WIN_BTN} title="Свернуть">
-          <svg width="14" height="14" viewBox="0 0 14 14">
-            <line x1="3" y1="11" x2="11" y2="11" stroke="#0028fa" strokeWidth="2" strokeLinecap="round" />
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <line x1="2" y1="9" x2="10" y2="9" stroke="#333" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </button>
         <button onClick={onAlwaysOnTop} style={WIN_BTN} title="Поверх всех окон">
-          <svg width="14" height="14" viewBox="0 0 14 14">
-            <rect x="1" y="1" width="7" height="7" rx="1" fill="none" stroke="#0028fa" strokeWidth="1.5" />
-            <rect x="4" y="4" width="7" height="7" rx="1" fill="rgba(0,40,250,0.1)" stroke="#0028fa" strokeWidth="1.5" />
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="#333" strokeWidth="1.5" />
+            <rect x="4" y="4" width="6" height="6" rx="1" fill="#e8e8e8" stroke="#333" strokeWidth="1.5" />
           </svg>
         </button>
         <button onClick={onClose} style={WIN_BTN} title="Закрыть">
-          <svg width="14" height="14" viewBox="0 0 14 14">
-            <line x1="3" y1="3" x2="11" y2="11" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
-            <line x1="11" y1="3" x2="3" y2="11" stroke="#cc2020" strokeWidth="2.5" strokeLinecap="round" />
+          <svg width="12" height="12" viewBox="0 0 12 12">
+            <line x1="2" y1="2" x2="10" y2="10" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+            <line x1="10" y1="2" x2="2" y2="10" stroke="#333" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </button>
       </div>
 
-      {/* Skip buttons row — per mockup: two blue buttons side by side */}
+      {/* Skip buttons — beige bg, black text per guide */}
       <div style={{
         display: 'flex',
         gap: 6,
-        padding: '0 10px 8px',
+        padding: '6px 8px',
       }}>
         <button
           onClick={onSkip}
           style={{
-            padding: '5px 14px',
-            backgroundColor: '#0068c8',
-            color: '#ffffff',
-            border: '1px solid #0028fa',
-            borderRadius: 4,
+            padding: '4px 12px',
+            backgroundColor: '#E0D8C0',
+            color: '#000000',
+            border: '1px solid #808080',
+            borderRadius: 3,
             fontSize: 11,
             fontFamily: 'Arial, sans-serif',
             cursor: 'pointer',
@@ -161,11 +162,11 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
         <button
           onClick={onSkipForever}
           style={{
-            padding: '5px 14px',
-            backgroundColor: '#0068c8',
-            color: '#ffffff',
-            border: '1px solid #0028fa',
-            borderRadius: 4,
+            padding: '4px 12px',
+            backgroundColor: '#E0D8C0',
+            color: '#000000',
+            border: '1px solid #808080',
+            borderRadius: 3,
             fontSize: 11,
             fontFamily: 'Arial, sans-serif',
             cursor: 'pointer',
@@ -175,14 +176,14 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
         </button>
       </div>
 
-      {/* Text window — beige/sandy background per mockup */}
+      {/* Text window — sandy/beige bg #D4C8A0 per guide */}
       <div style={{
         flex: 1,
-        margin: '0 10px 10px',
-        backgroundColor: '#d4bc8a',
-        border: '2px solid #0028fa',
+        margin: '0 8px 8px',
+        backgroundColor: '#D4C8A0',
+        border: '2px solid #606060',
         borderRadius: 3,
-        padding: 16,
+        padding: 14,
         overflowY: 'auto',
         fontFamily: 'Arial, sans-serif',
         fontSize: 13,
