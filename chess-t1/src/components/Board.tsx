@@ -20,7 +20,6 @@ const COLORS = {
   highlightLastMove: 'rgba(240, 232, 128, 0.3)',  // #F0E880 per guide
   highlightSelected: 'rgba(255, 100, 100, 0.35)',
   cellBorder: 'rgba(0, 0, 0, 0.2)',
-  gridLine: 'rgba(80, 160, 255, 0.15)',
 };
 
 function isLightSquare(file: string, rank: number): boolean {

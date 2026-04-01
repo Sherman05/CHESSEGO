@@ -2,7 +2,7 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import MoveIndicator from './MoveIndicator';
 
-// Silver gradient circle button per DESIGN_GUIDE
+// Silver gradient circle button — 32px diameter, dark border per DESIGN_GUIDE
 const CIRCLE_BTN: React.CSSProperties = {
   width: 32,
   height: 32,
@@ -17,10 +17,21 @@ const CIRCLE_BTN: React.CSSProperties = {
   padding: 0,
 };
 
+// Frozen: opacity 0.4, cursor not-allowed per DESIGN_GUIDE
 const CIRCLE_FROZEN: React.CSSProperties = {
   ...CIRCLE_BTN,
   opacity: 0.4,
   cursor: 'not-allowed',
+};
+
+// Hover handler — brightness(1.15) per DESIGN_GUIDE
+const hoverOn = (e: React.MouseEvent<HTMLButtonElement>) => {
+  if (!(e.currentTarget as HTMLButtonElement).disabled) {
+    e.currentTarget.style.filter = 'brightness(1.15)';
+  }
+};
+const hoverOff = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.currentTarget.style.filter = '';
 };
 
 interface BottomBarProps {
@@ -43,6 +54,7 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
   const isSetup = gameStage === 'setup';
   const isExtended = viewMode === 'extended';
 
+  // Freeze logic per DESIGN_GUIDE — DO NOT CHANGE
   const prevFrozen = isStart || isSetup || historyIndex <= 0;
   const nextFrozen = isStart || isSetup || historyIndex >= history.length - 1;
   const reverseFrozen = isStart;
@@ -58,17 +70,25 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
       minHeight: 40,
       flexShrink: 0,
     }}>
-      {/* Ok — only in extended view, per layout: leftmost in bottom row */}
+      {/* 1. Ok — circle with "Ok" text (ONLY in extended view) */}
       {isExtended && (
-        <button style={CIRCLE_BTN} onClick={onOkClick} title="Готово">
+        <button
+          style={CIRCLE_BTN}
+          onClick={onOkClick}
+          onMouseEnter={hoverOn}
+          onMouseLeave={hoverOff}
+          title="Готово"
+        >
           <span style={{ fontSize: 12, fontWeight: 'bold', color: '#0028fa', fontFamily: 'serif' }}>Ok</span>
         </button>
       )}
 
-      {/* Меню — 3 horizontal lines */}
+      {/* 2. Меню — circle with 3 horizontal lines (☰) */}
       <button
         style={CIRCLE_BTN}
         onClick={onMenuClick}
+        onMouseEnter={hoverOn}
+        onMouseLeave={hoverOff}
         title="Меню"
       >
         <svg width="16" height="16" viewBox="0 0 16 16">
@@ -78,12 +98,18 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </svg>
       </button>
 
-      {/* Move Indicator — per design: right of Menu in basic view */}
+      {/* 3. Move Indicator — text field, NOT button (only in basic view) */}
       {viewMode === 'basic' && <MoveIndicator />}
 
-      {/* Extended: Сброс */}
+      {/* Extended: Сброс button */}
       {isExtended && (
-        <button style={CIRCLE_BTN} onClick={onResetClick} title="Сброс">
+        <button
+          style={CIRCLE_BTN}
+          onClick={onResetClick}
+          onMouseEnter={hoverOn}
+          onMouseLeave={hoverOff}
+          title="Сброс"
+        >
           <svg width="14" height="14" viewBox="0 0 14 14">
             <path d="M3 7a4 4 0 1 1 1 2.6" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
             <path d="M3 4v3h3" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -91,13 +117,16 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </button>
       )}
 
+      {/* 4. Flex spacer */}
       <div style={{ flex: 1 }} />
 
-      {/* Предыдущий ход — double arrow « */}
+      {/* 5. Предыдущий ход — circle with double arrow left («) */}
       <button
         style={prevFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={prevFrozen}
         onClick={prevMove}
+        onMouseEnter={hoverOn}
+        onMouseLeave={hoverOff}
         title="Предыдущий ход"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
@@ -106,11 +135,13 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </svg>
       </button>
 
-      {/* Следующий ход — double arrow » */}
+      {/* 6. Следующий ход — circle with double arrow right (») */}
       <button
         style={nextFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={nextFrozen}
         onClick={nextMove}
+        onMouseEnter={hoverOn}
+        onMouseLeave={hoverOff}
         title="Следующий ход"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
@@ -119,11 +150,13 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </svg>
       </button>
 
-      {/* Удалить фигуру — circle with X, blue tint */}
+      {/* 7. Удалить фигуру — circle with X-in-circle (⊗), blue tint */}
       <button
         style={deleteFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={deleteFrozen}
         onClick={deleteSelectedPiece}
+        onMouseEnter={hoverOn}
+        onMouseLeave={hoverOff}
         title="Удалить фигуру"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
@@ -133,16 +166,20 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
         </svg>
       </button>
 
-      {/* Реверс — circular arrows */}
+      {/* 8. Реверс — circle with circular arrows (↻) */}
       <button
         style={reverseFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={reverseFrozen}
         onClick={toggleReverse}
+        onMouseEnter={hoverOn}
+        onMouseLeave={hoverOff}
         title="Перевернуть доску"
       >
         <svg width="14" height="14" viewBox="0 0 14 14">
-          <path d="M3 5l4-2.5L11 5" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M11 9l-4 2.5L3 9" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M10.5 4.5A4 4 0 0 0 3.5 5" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M3.5 9.5A4 4 0 0 0 10.5 9" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M5.5 3L3.5 5l2 2" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8.5 11L10.5 9l-2-2" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>
