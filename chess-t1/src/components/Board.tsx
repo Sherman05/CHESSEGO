@@ -162,7 +162,13 @@ const Board: React.FC = () => {
     // Check if target has own piece
     const targetPiece = board.get(targetSq);
     if (targetPiece && targetPiece.color === dragState.piece.color) {
-      // Can't place on own piece - snap back or go to last hovered
+      // Can't place on own piece - snap back
+      setDragState(null);
+      return;
+    }
+
+    // Kings cannot be captured
+    if (targetPiece && targetPiece.type === PieceType.KING) {
       setDragState(null);
       return;
     }

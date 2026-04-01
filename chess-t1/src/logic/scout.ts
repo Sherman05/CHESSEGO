@@ -13,6 +13,9 @@ export function checkScoutCapture(
   if (!targetPiece) return false;
   if (targetPiece.color === piece.color) return false;
 
+  // Kings cannot be captured, even by scout special move
+  if (targetPiece.type === PieceType.KING) return false;
+
   // Scout captures on castle square: both pieces disappear
   return true;
 }

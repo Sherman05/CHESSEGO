@@ -37,11 +37,25 @@ describe('scout.ts — special capture', () => {
     expect(checkScoutCapture(ritter, 'c7', 'c8', board)).toBe(false);
   });
 
-  it('works for black scout on white castle', () => {
+  it('works for black scout on white castle (non-king)', () => {
+    const board: BoardState = new Map();
+    board.set('e1', { type: PieceType.PRINCE, color: PieceColor.WHITE });
+    const scout = { type: PieceType.SCOUT, color: PieceColor.BLACK };
+    expect(checkScoutCapture(scout, 'e2', 'e1', board)).toBe(true);
+  });
+
+  it('scout CANNOT capture enemy king on castle', () => {
     const board: BoardState = new Map();
     board.set('e1', { type: PieceType.KING, color: PieceColor.WHITE });
     const scout = { type: PieceType.SCOUT, color: PieceColor.BLACK };
-    expect(checkScoutCapture(scout, 'e2', 'e1', board)).toBe(true);
+    expect(checkScoutCapture(scout, 'e2', 'e1', board)).toBe(false);
+  });
+
+  it('scout CANNOT capture enemy king on any castle square', () => {
+    const board: BoardState = new Map();
+    board.set('d8', { type: PieceType.KING, color: PieceColor.BLACK });
+    const scout = { type: PieceType.SCOUT, color: PieceColor.WHITE };
+    expect(checkScoutCapture(scout, 'd7', 'd8', board)).toBe(false);
   });
 
   it('works for all castle squares', () => {
