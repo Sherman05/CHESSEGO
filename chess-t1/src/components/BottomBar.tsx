@@ -2,25 +2,25 @@ import React from 'react';
 import { useGameStore, getViewMode } from '../stores/gameStore';
 import MoveIndicator from './MoveIndicator';
 
-// Large white circle with thick dark border — per screenshot
+// Silver gradient circle button per DESIGN_GUIDE
 const CIRCLE_BTN: React.CSSProperties = {
-  width: 44,
-  height: 44,
+  width: 32,
+  height: 32,
   borderRadius: '50%',
-  border: '2.5px solid #1a1a1a',
-  backgroundColor: '#ffffff',
+  border: '1.5px solid #555',
+  background: 'linear-gradient(180deg, #e0e4e8 0%, #b0b8c0 100%)',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transition: 'all 0.15s',
+  transition: 'filter 0.15s',
   padding: 0,
 };
 
 const CIRCLE_FROZEN: React.CSSProperties = {
   ...CIRCLE_BTN,
   opacity: 0.4,
-  cursor: 'default',
+  cursor: 'not-allowed',
 };
 
 interface BottomBarProps {
@@ -30,8 +30,8 @@ interface BottomBarProps {
   onFirstMoveToggle?: () => void;
 }
 
-const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkClick, onFirstMoveToggle }) => {
-  const { gameMode, gameStage, currentTurn, historyIndex, history } = useGameStore();
+const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkClick }) => {
+  const { gameMode, gameStage, historyIndex, history } = useGameStore();
   const prevMove = useGameStore((s) => s.prevMove);
   const nextMove = useGameStore((s) => s.nextMove);
   const toggleReverse = useGameStore((s) => s.toggleReverse);
@@ -52,135 +52,97 @@ const BottomBar: React.FC<BottomBarProps> = ({ onMenuClick, onResetClick, onOkCl
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: 8,
-      padding: '6px 10px',
-      background: 'linear-gradient(180deg, #4a9ae0 0%, #6ab4e8 50%, #9dd0f0 100%)',
-      minHeight: 54,
+      gap: 6,
+      padding: '4px 8px',
+      background: 'linear-gradient(180deg, #C0C8D0 0%, #B0B8C0 100%)',
+      minHeight: 40,
       flexShrink: 0,
     }}>
-      {/* Menu — circle with 3 horizontal lines */}
+      {/* Ok — only in extended view, per layout: leftmost in bottom row */}
+      {isExtended && (
+        <button style={CIRCLE_BTN} onClick={onOkClick} title="Готово">
+          <span style={{ fontSize: 12, fontWeight: 'bold', color: '#0028fa', fontFamily: 'serif' }}>Ok</span>
+        </button>
+      )}
+
+      {/* Меню — 3 horizontal lines */}
       <button
         style={CIRCLE_BTN}
         onClick={onMenuClick}
         title="Меню"
       >
-        <svg width="22" height="22" viewBox="0 0 22 22">
-          <line x1="5" y1="6" x2="17" y2="6" stroke="#0028fa" strokeWidth="3" strokeLinecap="round" />
-          <line x1="5" y1="11" x2="17" y2="11" stroke="#0028fa" strokeWidth="3" strokeLinecap="round" />
-          <line x1="5" y1="16" x2="17" y2="16" stroke="#0028fa" strokeWidth="3" strokeLinecap="round" />
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <line x1="3" y1="4" x2="13" y2="4" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+          <line x1="3" y1="8" x2="13" y2="8" stroke="#333" strokeWidth="2" strokeLinecap="round" />
+          <line x1="3" y1="12" x2="13" y2="12" stroke="#333" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* Move Indicator */}
+      {/* Move Indicator — per design: right of Menu in basic view */}
       {viewMode === 'basic' && <MoveIndicator />}
 
-      {/* Extended view buttons */}
+      {/* Extended: Сброс */}
       {isExtended && (
-        <>
-          <button style={CIRCLE_BTN} onClick={onResetClick} title="Сброс">
-            <svg width="20" height="20" viewBox="0 0 20 20">
-              <path d="M4 10a6 6 0 1 1 1.5 3.9" fill="none" stroke="#0028fa" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M4 6v4h4" fill="none" stroke="#0028fa" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-
-          <button style={CIRCLE_BTN} onClick={onOkClick} title="Готово">
-            <span style={{ fontSize: 15, fontWeight: 'bold', color: '#0028fa', fontFamily: 'serif' }}>Ok</span>
-          </button>
-
-          <button
-            style={{
-              ...CIRCLE_BTN,
-              width: 'auto',
-              borderRadius: 14,
-              padding: '4px 12px',
-              flexDirection: 'column',
-              gap: 2,
-              height: 'auto',
-              minHeight: 40,
-            }}
-            onClick={onFirstMoveToggle}
-            title="1-й ход"
-          >
-            <span style={{ fontSize: 10, color: '#1a1a1a', fontFamily: 'Arial, sans-serif' }}>1-й ход</span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{
-                width: 24, height: 10, borderRadius: 1,
-                backgroundColor: '#ffffff',
-                border: '1.5px solid #1a1a1a',
-                position: 'relative',
-              }}>
-                {currentTurn === 'white' && <div style={{
-                  width: 6, height: 6, borderRadius: '50%', backgroundColor: '#555',
-                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-                }} />}
-              </div>
-              <div style={{
-                width: 24, height: 10, borderRadius: 1,
-                backgroundColor: '#000000',
-                border: '1.5px solid #1a1a1a',
-                position: 'relative',
-              }}>
-                {currentTurn === 'black' && <div style={{
-                  width: 6, height: 6, borderRadius: '50%', backgroundColor: '#ccc',
-                  position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-                }} />}
-              </div>
-            </div>
-          </button>
-        </>
+        <button style={CIRCLE_BTN} onClick={onResetClick} title="Сброс">
+          <svg width="14" height="14" viewBox="0 0 14 14">
+            <path d="M3 7a4 4 0 1 1 1 2.6" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M3 4v3h3" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       )}
 
       <div style={{ flex: 1 }} />
 
-      {/* Предыдущий ход */}
+      {/* Предыдущий ход — double arrow « */}
       <button
         style={prevFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={prevFrozen}
         onClick={prevMove}
         title="Предыдущий ход"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <path d="M12 4L6 10l6 6" fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="14" height="14" viewBox="0 0 14 14">
+          <path d="M8 3L4 7l4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M12 3L8 7l4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {/* Следующий ход */}
+      {/* Следующий ход — double arrow » */}
       <button
         style={nextFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={nextFrozen}
         onClick={nextMove}
         title="Следующий ход"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <path d="M8 4l6 6-6 6" fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="14" height="14" viewBox="0 0 14 14">
+          <path d="M2 3l4 4-4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6 3l4 4-4 4" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
-      {/* Удалить фигуру */}
+      {/* Удалить фигуру — circle with X, blue tint */}
       <button
         style={deleteFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={deleteFrozen}
         onClick={deleteSelectedPiece}
         title="Удалить фигуру"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <path d="M5 7h10l-1 9H6L5 7z" fill="none" stroke="#1a1a1a" strokeWidth="2" />
-          <path d="M4 5h12" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M7.5 5V3.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V5" fill="none" stroke="#1a1a1a" strokeWidth="1.5" />
+        <svg width="14" height="14" viewBox="0 0 14 14">
+          <circle cx="7" cy="7" r="5.5" fill="none" stroke="#4A90D9" strokeWidth="1.5" />
+          <line x1="4.5" y1="4.5" x2="9.5" y2="9.5" stroke="#4A90D9" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="9.5" y1="4.5" x2="4.5" y2="9.5" stroke="#4A90D9" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       </button>
 
-      {/* Перевернуть доску */}
+      {/* Реверс — circular arrows */}
       <button
         style={reverseFrozen ? CIRCLE_FROZEN : CIRCLE_BTN}
         disabled={reverseFrozen}
         onClick={toggleReverse}
         title="Перевернуть доску"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <path d="M5 7l5-3 5 3" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M15 13l-5 3-5-3" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="14" height="14" viewBox="0 0 14 14">
+          <path d="M3 5l4-2.5L11 5" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M11 9l-4 2.5L3 9" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>

@@ -6,20 +6,21 @@ import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
 import { checkScoutCapture } from '../logic/scout';
 
-// Design colors — matched to screenshot
+// Design colors — from DESIGN_GUIDE.md
 const COLORS = {
-  lightSquare: '#ffffff',
-  darkSquare: '#b8b8b8',
-  castleSquare: '#dcdcdc',
-  border: '#1060d0',
-  borderOuter: '#0040ee',
-  notation: '#ffffff',
-  highlightStart: 'rgba(100, 180, 255, 0.45)',
-  highlightHover: 'rgba(100, 180, 255, 0.35)',
-  highlightLastMove: 'rgba(100, 180, 255, 0.2)',
+  lightSquare: '#FFFFFF',
+  darkSquare: '#808080',
+  castleSquare: '#C0C0C0',
+  border: '#1A3A5C',
+  borderOuter: '#1A3A5C',
+  notationBg: '#D0D0D0',
+  notationText: '#000000',
+  highlightStart: 'rgba(144, 208, 128, 0.5)',    // #90D080 per guide
+  highlightHover: 'rgba(144, 208, 128, 0.35)',
+  highlightLastMove: 'rgba(240, 232, 128, 0.3)',  // #F0E880 per guide
   highlightSelected: 'rgba(255, 100, 100, 0.35)',
-  cellBorder: 'rgba(0, 0, 0, 0.25)',
-  gridLine: 'rgba(80, 160, 255, 0.3)',
+  cellBorder: 'rgba(0, 0, 0, 0.2)',
+  gridLine: 'rgba(80, 160, 255, 0.15)',
 };
 
 function isLightSquare(file: string, rank: number): boolean {
@@ -63,8 +64,8 @@ const Board: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const notationSize = containerSize * 0.04;
-  const borderSize = containerSize * 0.025; // thicker blue border per screenshot
+  const notationSize = containerSize * 0.035;
+  const borderSize = containerSize * 0.015;
   const boardSize = containerSize - (notationSize + borderSize) * 2;
   const cellSize = boardSize / 8;
 
@@ -344,6 +345,11 @@ const Board: React.FC = () => {
     let bgColor = isLight ? COLORS.lightSquare : COLORS.darkSquare;
     if (castle) bgColor = COLORS.castleSquare;
 
+    // Castle hatching pattern per DESIGN_GUIDE
+    const castleHatch = castle
+      ? 'repeating-linear-gradient(45deg, transparent, transparent 3px, #909090 3px, #909090 4px)'
+      : 'none';
+
     let highlight = '';
     if (dragState?.fromSquare === sq) {
       highlight = COLORS.highlightStart;
@@ -369,8 +375,8 @@ const Board: React.FC = () => {
           width: cellSize,
           height: cellSize,
           backgroundColor: bgColor,
-          borderRight: `1px solid ${COLORS.gridLine}`,
-          borderBottom: `1px solid ${COLORS.cellBorder}`,
+          backgroundImage: castleHatch,
+          border: `0.5px solid ${COLORS.cellBorder}`,
           boxSizing: 'border-box',
         }}
       >
@@ -430,7 +436,7 @@ const Board: React.FC = () => {
         top: borderSize,
         right: borderSize,
         bottom: borderSize,
-        backgroundColor: COLORS.border,
+        backgroundColor: COLORS.notationBg,
       }}>
         {/* Left notation (ranks) */}
         <div style={{
@@ -448,7 +454,7 @@ const Board: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: COLORS.notation,
+              color: COLORS.notationText,
               fontSize: cellSize * 0.28,
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
@@ -474,7 +480,7 @@ const Board: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: COLORS.notation,
+              color: COLORS.notationText,
               fontSize: cellSize * 0.28,
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
@@ -500,7 +506,7 @@ const Board: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: COLORS.notation,
+              color: COLORS.notationText,
               fontSize: cellSize * 0.28,
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
@@ -526,7 +532,7 @@ const Board: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: COLORS.notation,
+              color: COLORS.notationText,
               fontSize: cellSize * 0.28,
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',

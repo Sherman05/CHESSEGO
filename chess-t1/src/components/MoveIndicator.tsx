@@ -8,15 +8,15 @@ const MoveIndicator: React.FC = () => {
 
   return (
     <div style={{
-      padding: '4px 12px',
-      backgroundColor: 'rgba(255,255,255,0.85)',
-      borderRadius: 4,
-      fontSize: 14,
+      padding: '3px 10px',
+      backgroundColor: '#E8E0D0',
+      borderRadius: 3,
+      fontSize: 13,
       fontFamily: 'monospace',
       fontWeight: 'bold',
       color: '#1a1a1a',
       whiteSpace: 'nowrap',
-      border: '1px solid rgba(0,0,0,0.2)',
+      border: '1px solid #a0a0a0',
     }}>
       {moveIndicator}
     </div>
