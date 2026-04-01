@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
-  <!-- Prince White: Circle top + pentagon body + 1 center line -->
+  <!-- Scout White (Разведчик): Circle top + pentagon body + 1 line + side "nose" protrusion -->
   <!-- Circle navershie -->
   <circle cx="30" cy="6" r="4"
           fill="#FFFFFF" stroke="#411B1A" stroke-width="2.5"/>
-  <!-- Pentagon body (home plate) -->
+  <!-- Pentagon body -->
   <path d="M 15,72 L 10,30 L 30,14 L 50,30 L 45,72 Z"
         fill="#FFFFFF" stroke="#411B1A" stroke-width="2.5"
+        stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Side "nose" protrusion — triangular bump on the right -->
+  <path d="M 46,42 L 56,50 L 46,58 Z"
+        fill="#FFFFFF" stroke="#411B1A" stroke-width="2"
         stroke-linejoin="round" stroke-linecap="round"/>
   <!-- Center vertical line -->
   <line x1="30" y1="28" x2="30" y2="65"
