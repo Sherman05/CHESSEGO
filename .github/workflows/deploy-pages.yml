@@ -2,7 +2,7 @@ name: Deploy chess-T1 demo to GitHub Pages
 
 on:
   push:
-    branches: ['claude/chess-t1-desktop-app-XO9Mt']
+    branches: ['demo-frozen']
   workflow_dispatch:
 
 permissions:
