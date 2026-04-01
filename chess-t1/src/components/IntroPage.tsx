@@ -46,7 +46,7 @@ const INTRO_TEXT = `Как пользоваться программой ГИ ch
 Перемещение фигур:
 Нажмите и удерживайте левую кнопку мыши на фигуре, перетащите на нужную клетку и отпустите. Фигура автоматически встанет в центр клетки.`;
 
-// Silver gradient circle button
+/* Silver gradient circle button style per DESIGN_GUIDE */
 const WIN_BTN: React.CSSProperties = {
   width: 28,
   height: 28,
@@ -60,45 +60,63 @@ const WIN_BTN: React.CSSProperties = {
   padding: 0,
 };
 
-const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForever, onMinimize, onAlwaysOnTop, onClose }) => {
+const IntroPage: React.FC<IntroPageProps> = ({
+  onEnterMain,
+  onSkip,
+  onSkipForever,
+  onMinimize,
+  onAlwaysOnTop,
+  onClose,
+}) => {
+  /* Split INTRO_TEXT: first line is title, rest is body */
+  const titleLine = INTRO_TEXT.split('\n')[0];
+  const bodyText = INTRO_TEXT.split('\n').slice(1).join('\n');
+
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      background: 'linear-gradient(180deg, #4A90D9 0%, #2E6AB0 100%)',
-      overflow: 'hidden',
-    }}>
-      {/* Top controls row */}
-      <div style={{
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
         display: 'flex',
-        alignItems: 'center',
-        padding: '6px 8px',
-        gap: 8,
-        background: 'linear-gradient(180deg, #C8D0D8 0%, #A8B4C0 100%)',
-      }}>
-        {/* Program symbol (decorative chess board) */}
-        <div style={{
-          width: 30,
-          height: 30,
-          borderRadius: 3,
-          border: '1px solid #888',
-          backgroundColor: '#fff',
+        flexDirection: 'column',
+        background: 'linear-gradient(180deg, #4A90D9 0%, #2E6AB0 100%)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      {/* ── 1. Top bar ── */}
+      <div
+        style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
+          padding: '6px 8px',
+          gap: 8,
+          background: 'linear-gradient(180deg, #C8D0D8 0%, #A8B4C0 100%)',
+        }}
+      >
+        {/* Program symbol — decorative 2x2 chess board in a frame */}
+        <div
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 3,
+            border: '1px solid #888',
+            backgroundColor: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
           <svg width="20" height="20" viewBox="0 0 20 20">
-            <rect x="1" y="1" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5"/>
-            <rect x="10" y="1" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5"/>
-            <rect x="1" y="10" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5"/>
-            <rect x="10" y="10" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5"/>
+            <rect x="1" y="1" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5" />
+            <rect x="10" y="1" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5" />
+            <rect x="1" y="10" width="9" height="9" fill="#666" stroke="#333" strokeWidth="0.5" />
+            <rect x="10" y="10" width="9" height="9" fill="#fff" stroke="#333" strokeWidth="0.5" />
           </svg>
         </div>
 
-        {/* "Основной режим" — blue button per guide */}
+        {/* "Основной режим" button — blue bg, white text, rounded */}
         <button
           onClick={onEnterMain}
           style={{
@@ -118,13 +136,13 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
 
         <div style={{ flex: 1 }} />
 
-        {/* Window controls */}
+        {/* Circle buttons: Свернуть —, Поверх □, Закрыть × */}
         <button onClick={onMinimize} style={WIN_BTN} title="Свернуть">
           <svg width="12" height="12" viewBox="0 0 12 12">
             <line x1="2" y1="9" x2="10" y2="9" stroke="#333" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </button>
-        <button onClick={onAlwaysOnTop} style={WIN_BTN} title="Поверх всех окон">
+        <button onClick={onAlwaysOnTop} style={WIN_BTN} title="Поверх">
           <svg width="12" height="12" viewBox="0 0 12 12">
             <rect x="1" y="1" width="6" height="6" rx="1" fill="none" stroke="#333" strokeWidth="1.5" />
             <rect x="4" y="4" width="6" height="6" rx="1" fill="#e8e8e8" stroke="#333" strokeWidth="1.5" />
@@ -138,12 +156,8 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
         </button>
       </div>
 
-      {/* Skip buttons — beige bg, black text per guide */}
-      <div style={{
-        display: 'flex',
-        gap: 6,
-        padding: '6px 8px',
-      }}>
+      {/* ── 2. Skip buttons ── */}
+      <div style={{ display: 'flex', gap: 6, padding: '6px 8px' }}>
         <button
           onClick={onSkip}
           style={{
@@ -157,7 +171,7 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
             cursor: 'pointer',
           }}
         >
-          Пропустить вводный текст/ перейти в основной режим
+          Пропустить вводный текст / перейти в основной режим
         </button>
         <button
           onClick={onSkipForever}
@@ -176,22 +190,56 @@ const IntroPage: React.FC<IntroPageProps> = ({ onEnterMain, onSkip, onSkipForeve
         </button>
       </div>
 
-      {/* Text window — sandy/beige bg #D4C8A0 per guide */}
-      <div style={{
-        flex: 1,
-        margin: '0 8px 8px',
-        backgroundColor: '#D4C8A0',
-        border: '2px solid #606060',
-        borderRadius: 3,
-        padding: 14,
-        overflowY: 'auto',
-        fontFamily: 'Arial, sans-serif',
-        fontSize: 13,
-        lineHeight: 1.6,
-        color: '#1a1a1a',
-        whiteSpace: 'pre-wrap',
-      }}>
-        {INTRO_TEXT}
+      {/* ── 3. Text area ── */}
+      <div
+        style={{
+          flex: 1,
+          margin: '0 8px 8px',
+          backgroundColor: '#D4C8A0',
+          border: '2px solid #606060',
+          borderRadius: 3,
+          padding: 14,
+          overflowY: 'auto',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: 13,
+          lineHeight: 1.6,
+          color: '#1a1a1a',
+        }}
+      >
+        {/* Title — centered */}
+        <div
+          style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginBottom: 10,
+          }}
+        >
+          {titleLine}
+        </div>
+        {/* Body — pre-wrapped */}
+        <div style={{ whiteSpace: 'pre-wrap' }}>{bodyText}</div>
+      </div>
+
+      {/* ── 4. Resize handle — bottom right diagonal dots ── */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 2,
+          bottom: 2,
+          width: 14,
+          height: 14,
+          cursor: 'nwse-resize',
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14">
+          <circle cx="11" cy="11" r="1.2" fill="#888" />
+          <circle cx="7" cy="11" r="1.2" fill="#888" />
+          <circle cx="11" cy="7" r="1.2" fill="#888" />
+          <circle cx="3" cy="11" r="1.2" fill="#888" />
+          <circle cx="7" cy="7" r="1.2" fill="#888" />
+          <circle cx="11" cy="3" r="1.2" fill="#888" />
+        </svg>
       </div>
     </div>
   );
