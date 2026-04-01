@@ -42,12 +42,13 @@ export async function saveSession(
   try {
     if (await isTauri()) {
       const { writeTextFile, mkdir, exists } = await import('@tauri-apps/plugin-fs');
-      const { appDataDir } = await import('@tauri-apps/api/path');
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
       const dir = await appDataDir();
       if (!(await exists(dir))) {
         await mkdir(dir, { recursive: true });
       }
-      await writeTextFile(dir + SESSION_FILE, JSON.stringify(data));
+      const path = await join(dir, SESSION_FILE);
+      await writeTextFile(path, JSON.stringify(data));
     } else {
       localStorage.setItem(SESSION_FILE, JSON.stringify(data));
     }
@@ -62,9 +63,9 @@ export async function loadSession(): Promise<SavedSession | null> {
   try {
     if (await isTauri()) {
       const { readTextFile, exists } = await import('@tauri-apps/plugin-fs');
-      const { appDataDir } = await import('@tauri-apps/api/path');
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
       const dir = await appDataDir();
-      const path = dir + SESSION_FILE;
+      const path = await join(dir, SESSION_FILE);
       if (await exists(path)) {
         const raw = await readTextFile(path);
         return JSON.parse(raw) as SavedSession;
@@ -87,8 +88,8 @@ export async function clearSession() {
   try {
     if (await isTauri()) {
       const { remove, exists } = await import('@tauri-apps/plugin-fs');
-      const { appDataDir } = await import('@tauri-apps/api/path');
-      const path = (await appDataDir()) + SESSION_FILE;
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
+      const path = await join(await appDataDir(), SESSION_FILE);
       if (await exists(path)) await remove(path);
     }
   } catch {}

@@ -170,7 +170,7 @@ const App: React.FC = () => {
           onSkipForever={handleSkipIntroForever}
           onMinimize={handleMinimize}
           onAlwaysOnTop={handleAlwaysOnTop}
-          onClose={() => window.close()}
+          onClose={closeWindow}
         />
       </div>
     );
@@ -187,12 +187,12 @@ const App: React.FC = () => {
       overflow: 'hidden',
       backgroundColor: '#e8e8e8',
     }}>
-      {/* Title bar drag area */}
+      {/* Title bar drag region — entire top bar also draggable */}
       <div
         data-tauri-drag-region
         style={{
-          height: 4,
-          backgroundColor: '#3a8ad0',
+          height: 6,
+          backgroundColor: '#B8C0C8',
           cursor: 'move',
           flexShrink: 0,
         }}

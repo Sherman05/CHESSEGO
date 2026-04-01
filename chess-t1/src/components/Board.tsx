@@ -259,6 +259,14 @@ const Board: React.FC = () => {
     const sq = getSquareFromPos(e.clientX, e.clientY);
     if (!sq) return;
 
+    // If a tray piece is selected, place it on click
+    const { trayPieceSelected, placePiece: storePlacePiece } = useGameStore.getState();
+    if (trayPieceSelected) {
+      storePlacePiece(sq, trayPieceSelected);
+      // Don't deselect — allow placing multiple of the same piece
+      return;
+    }
+
     const piece = board.get(sq);
     if (!piece) return;
 
@@ -295,17 +303,24 @@ const Board: React.FC = () => {
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (gameStage !== 'setup') return;
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
   }, [gameStage]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     if (gameStage !== 'setup') return;
     e.preventDefault();
-    const data = e.dataTransfer.getData('application/json');
+    e.stopPropagation();
+
+    // Try to get piece data from multiple formats
+    let data = e.dataTransfer.getData('application/json');
+    if (!data) data = e.dataTransfer.getData('text/plain');
+    if (!data) data = e.dataTransfer.getData('text');
     if (!data) return;
 
     try {
       const piece = JSON.parse(data) as Piece;
+      if (!piece.type || !piece.color) return;
       const sq = getSquareFromPos(e.clientX, e.clientY);
       if (sq) {
         const { placePiece } = useGameStore.getState();
@@ -418,7 +433,7 @@ const Board: React.FC = () => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {/* Outer border */}
+      {/* Outer border — pointerEvents none so drops pass through */}
       <div style={{
         position: 'absolute',
         inset: 0,

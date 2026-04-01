@@ -25,43 +25,32 @@ export async function saveScreenshotToFile(blob: Blob, filename: string, folderP
   try {
     if (isTauri()) {
       const { writeFile, mkdir, exists } = await import('@tauri-apps/plugin-fs');
-      const { desktopDir, pictureDir } = await import('@tauri-apps/api/path');
+      const { join, desktopDir, pictureDir } = await import('@tauri-apps/api/path');
 
-      // Determine save directory
       let dir: string;
       if (folderPath) {
         dir = folderPath;
       } else {
-        try {
-          dir = await pictureDir();
-        } catch {
-          dir = await desktopDir();
-        }
+        try { dir = await pictureDir(); } catch { dir = await desktopDir(); }
       }
 
-      // Ensure directory exists
       if (!(await exists(dir))) {
         await mkdir(dir, { recursive: true });
       }
 
-      // Convert blob to Uint8Array
       const arrayBuffer = await blob.arrayBuffer();
       const data = new Uint8Array(arrayBuffer);
-
-      // Clean filename for filesystem
       const cleanName = filename.replace(/[<>:"/\\|?*]/g, '_');
-      const path = dir + (dir.endsWith('/') || dir.endsWith('\\') ? '' : '/') + cleanName;
+      const path = await join(dir, cleanName);
 
       await writeFile(path, data);
       return true;
     } else {
-      // Browser fallback — download
       downloadBlob(blob, filename);
       return true;
     }
   } catch (e) {
     console.error('Save screenshot failed:', e);
-    // Fallback to browser download
     downloadBlob(blob, filename);
     return true;
   }
@@ -71,11 +60,11 @@ export async function createPartyFolder(folderName: string): Promise<string | nu
   try {
     if (isTauri()) {
       const { mkdir, exists } = await import('@tauri-apps/plugin-fs');
-      const { desktopDir } = await import('@tauri-apps/api/path');
+      const { join, desktopDir } = await import('@tauri-apps/api/path');
 
       const desktop = await desktopDir();
       const cleanName = folderName.replace(/[<>:"/\\|?*]/g, '_');
-      const path = desktop + cleanName;
+      const path = await join(desktop, cleanName);
 
       if (!(await exists(path))) {
         await mkdir(path, { recursive: true });
@@ -86,7 +75,7 @@ export async function createPartyFolder(folderName: string): Promise<string | nu
   } catch (e) {
     console.error('Create folder failed:', e);
   }
-  return folderName; // Return name as-is for browser mode
+  return folderName;
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
