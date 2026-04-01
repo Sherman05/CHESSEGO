@@ -10,7 +10,7 @@ import FolderDialog from './components/FolderDialog';
 import CloseDialog from './components/CloseDialog';
 import MenuPopup from './components/MenuPopup';
 import IntroPage from './components/IntroPage';
-import { captureScreenshot, downloadBlob } from './utils/screenshot';
+import { captureScreenshot, saveScreenshotToFile, createPartyFolder } from './utils/screenshot';
 import { saveSession, loadSession, clearSession, setIntroSkipped, isIntroSkipped } from './utils/persistence';
 
 const App: React.FC = () => {
@@ -34,13 +34,15 @@ const App: React.FC = () => {
 
   // Startup: check for saved session or show intro
   useEffect(() => {
-    const saved = loadSession();
-    if (saved) {
-      restoreSession(saved);
-      clearSession();
-    } else if (!isIntroSkipped()) {
-      setShowIntroPage(true);
-    }
+    (async () => {
+      const saved = await loadSession();
+      if (saved) {
+        restoreSession(saved);
+        await clearSession();
+      } else if (!isIntroSkipped()) {
+        setShowIntroPage(true);
+      }
+    })();
   }, []);
 
   const handlePartyClick = useCallback(() => {
@@ -60,12 +62,13 @@ const App: React.FC = () => {
     startAnalysis();
   }, [gameMode, startAnalysis, endSession]);
 
-  const handleFolderConfirm = useCallback((folderName: string) => {
+  const handleFolderConfirm = useCallback(async (folderName: string) => {
     setShowFolderDialog(false);
+    const folderPath = await createPartyFolder(folderName);
     if (folderMode === 'party') {
-      startParty(folderName);
+      startParty(folderPath);
     } else {
-      startAnalysisPlay(folderName);
+      startAnalysisPlay(folderPath);
     }
   }, [folderMode, startParty, startAnalysisPlay]);
 
@@ -90,41 +93,50 @@ const App: React.FC = () => {
     }
   }, [toggleAlwaysOnTop]);
 
+  const closeWindow = useCallback(async () => {
+    try {
+      const { getCurrentWindow } = await import('@tauri-apps/api/window');
+      await getCurrentWindow().close();
+    } catch {
+      window.close();
+    }
+  }, []);
+
   const handleClose = useCallback(() => {
     if (gameMode !== 'none' && gameStage === 'play') {
       setShowCloseDialog(true);
     } else {
-      window.close();
+      closeWindow();
     }
-  }, [gameMode, gameStage]);
+  }, [gameMode, gameStage, closeWindow]);
 
   const handleCloseWithEnd = useCallback(async (save: boolean) => {
     if (save) {
       const blob = await captureScreenshot();
-      if (blob) downloadBlob(blob, `${moveIndicator || 'position'}.png`);
+      if (blob) await saveScreenshotToFile(blob, `${moveIndicator || 'position'}.png`, partyFolder);
     }
-    clearSession();
+    await clearSession();
     endSession();
-    window.close();
-  }, [moveIndicator, endSession]);
+    closeWindow();
+  }, [moveIndicator, partyFolder, endSession, closeWindow]);
 
   const handleCloseWithoutEnd = useCallback(async (save: boolean) => {
     if (save) {
       const blob = await captureScreenshot();
-      if (blob) downloadBlob(blob, `${moveIndicator || 'position'}.png`);
+      if (blob) await saveScreenshotToFile(blob, `${moveIndicator || 'position'}.png`, partyFolder);
     }
-    saveSession(board, currentTurn, moveNumber, gameMode, gameStage, partyFolder, moveIndicator);
-    window.close();
-  }, [board, currentTurn, moveNumber, gameMode, gameStage, partyFolder, moveIndicator]);
+    await saveSession(board, currentTurn, moveNumber, gameMode, gameStage, partyFolder, moveIndicator);
+    closeWindow();
+  }, [board, currentTurn, moveNumber, gameMode, gameStage, partyFolder, moveIndicator, closeWindow]);
 
   const handleSavePosition = useCallback(async () => {
     const blob = await captureScreenshot();
     if (blob) {
-      downloadBlob(blob, `${moveIndicator || 'position'}.png`);
+      await saveScreenshotToFile(blob, `${moveIndicator || 'position'}.png`, partyFolder);
       setSaveMessage('Текущая позиция сохранена');
       setTimeout(() => setSaveMessage(''), 1500);
     }
-  }, [moveIndicator]);
+  }, [moveIndicator, partyFolder]);
 
   const handleEndParty = useCallback(() => {
     endSession();
