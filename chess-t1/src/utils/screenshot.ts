@@ -1,21 +1,20 @@
 export async function captureScreenshot(): Promise<Blob | null> {
   try {
-    const html2canvas = (await import('html2canvas')).default;
-    // Capture the board element directly (the actual board with pieces)
+    const domtoimage = await import('dom-to-image-more');
     const boardEl = document.querySelector('[data-board-capture]') as HTMLElement;
     if (!boardEl) return null;
 
-    const canvas = await html2canvas(boardEl, {
-      backgroundColor: '#e8e8e8',
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
+    // dom-to-image-more handles SVG images properly
+    const blob = await domtoimage.toBlob(boardEl, {
+      bgcolor: '#e8e8e8',
+      quality: 1,
+      style: {
+        // Ensure the element is fully visible for capture
+        overflow: 'visible',
+      },
     });
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), 'image/png');
-    });
+    return blob;
   } catch (e) {
     console.error('Screenshot failed:', e);
     return null;
