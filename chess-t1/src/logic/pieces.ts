@@ -52,14 +52,14 @@ export type BoardState = Map<Square, Piece>;
 export function createInitialPosition(): BoardState {
   const board: BoardState = new Map();
 
-  // Row 1 - White back rank: Рт, Пр, Рк, Кт, Кр, Рк, Пр, Рт
+  // Row 1 - White back rank per ТЗ: Рт, Рк, Пр, Кт, Кр, Пр, Рк, Рт
   board.set('a1', { type: PieceType.RITTER, color: PieceColor.WHITE });
-  board.set('b1', { type: PieceType.PRINCE, color: PieceColor.WHITE });
-  board.set('c1', { type: PieceType.SCOUT, color: PieceColor.WHITE });
+  board.set('b1', { type: PieceType.SCOUT, color: PieceColor.WHITE });
+  board.set('c1', { type: PieceType.PRINCE, color: PieceColor.WHITE });
   board.set('d1', { type: PieceType.KONNET, color: PieceColor.WHITE });
   board.set('e1', { type: PieceType.KING, color: PieceColor.WHITE });
-  board.set('f1', { type: PieceType.SCOUT, color: PieceColor.WHITE });
-  board.set('g1', { type: PieceType.PRINCE, color: PieceColor.WHITE });
+  board.set('f1', { type: PieceType.PRINCE, color: PieceColor.WHITE });
+  board.set('g1', { type: PieceType.SCOUT, color: PieceColor.WHITE });
   board.set('h1', { type: PieceType.RITTER, color: PieceColor.WHITE });
 
   // Row 2 - White knechts
@@ -72,14 +72,14 @@ export function createInitialPosition(): BoardState {
     board.set(toSquare(file, 7), { type: PieceType.KNEKHT, color: PieceColor.BLACK });
   }
 
-  // Row 8 - Black back rank: Рт, Пр, Рк, Кт, Кр, Рк, Пр, Рт
+  // Row 8 - Black back rank per ТЗ: Рт, Рк, Пр, Кт, Кр, Пр, Рк, Рт
   board.set('a8', { type: PieceType.RITTER, color: PieceColor.BLACK });
-  board.set('b8', { type: PieceType.PRINCE, color: PieceColor.BLACK });
-  board.set('c8', { type: PieceType.SCOUT, color: PieceColor.BLACK });
+  board.set('b8', { type: PieceType.SCOUT, color: PieceColor.BLACK });
+  board.set('c8', { type: PieceType.PRINCE, color: PieceColor.BLACK });
   board.set('d8', { type: PieceType.KONNET, color: PieceColor.BLACK });
   board.set('e8', { type: PieceType.KING, color: PieceColor.BLACK });
-  board.set('f8', { type: PieceType.SCOUT, color: PieceColor.BLACK });
-  board.set('g8', { type: PieceType.PRINCE, color: PieceColor.BLACK });
+  board.set('f8', { type: PieceType.PRINCE, color: PieceColor.BLACK });
+  board.set('g8', { type: PieceType.SCOUT, color: PieceColor.BLACK });
   board.set('h8', { type: PieceType.RITTER, color: PieceColor.BLACK });
 
   return board;

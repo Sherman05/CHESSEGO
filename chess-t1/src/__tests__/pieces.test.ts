@@ -17,20 +17,20 @@ describe('pieces.ts', () => {
     it('has correct white back rank', () => {
       const board = createInitialPosition();
       expect(board.get('a1')).toEqual({ type: PieceType.RITTER, color: PieceColor.WHITE });
-      expect(board.get('b1')).toEqual({ type: PieceType.PRINCE, color: PieceColor.WHITE });
-      expect(board.get('c1')).toEqual({ type: PieceType.SCOUT, color: PieceColor.WHITE });
+      expect(board.get('b1')).toEqual({ type: PieceType.SCOUT, color: PieceColor.WHITE });
+      expect(board.get('c1')).toEqual({ type: PieceType.PRINCE, color: PieceColor.WHITE });
       expect(board.get('d1')).toEqual({ type: PieceType.KONNET, color: PieceColor.WHITE });
       expect(board.get('e1')).toEqual({ type: PieceType.KING, color: PieceColor.WHITE });
-      expect(board.get('f1')).toEqual({ type: PieceType.SCOUT, color: PieceColor.WHITE });
-      expect(board.get('g1')).toEqual({ type: PieceType.PRINCE, color: PieceColor.WHITE });
+      expect(board.get('f1')).toEqual({ type: PieceType.PRINCE, color: PieceColor.WHITE });
+      expect(board.get('g1')).toEqual({ type: PieceType.SCOUT, color: PieceColor.WHITE });
       expect(board.get('h1')).toEqual({ type: PieceType.RITTER, color: PieceColor.WHITE });
     });
 
     it('has correct black back rank', () => {
       const board = createInitialPosition();
       expect(board.get('a8')).toEqual({ type: PieceType.RITTER, color: PieceColor.BLACK });
-      expect(board.get('b8')).toEqual({ type: PieceType.PRINCE, color: PieceColor.BLACK });
-      expect(board.get('c8')).toEqual({ type: PieceType.SCOUT, color: PieceColor.BLACK });
+      expect(board.get('b8')).toEqual({ type: PieceType.SCOUT, color: PieceColor.BLACK });
+      expect(board.get('c8')).toEqual({ type: PieceType.PRINCE, color: PieceColor.BLACK });
       expect(board.get('d8')).toEqual({ type: PieceType.KONNET, color: PieceColor.BLACK });
       expect(board.get('e8')).toEqual({ type: PieceType.KING, color: PieceColor.BLACK });
     });
