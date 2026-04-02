@@ -1,13 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
-  <!-- King Black: Larger circle top + pentagon body + 1 center line -->
-  <!-- Larger circle navershie -->
-  <circle cx="30" cy="6" r="5"
+  <!-- King Black (Кр): circle navershie + pentagon body + 1 center line -->
+  <circle cx="30" cy="6" r="4"
           fill="#000000" stroke="#411B1A" stroke-width="2.5"/>
-  <!-- Pentagon body (slightly taller) -->
-  <path d="M 16,72 L 11,30 L 30,12 L 49,30 L 44,72 Z"
+  <path d="M 15,72 L 10,30 L 30,12 L 50,30 L 45,72 Z"
         fill="#000000" stroke="#411B1A" stroke-width="2.5"
         stroke-linejoin="round" stroke-linecap="round"/>
-  <!-- Center vertical line -->
-  <line x1="30" y1="26" x2="30" y2="65"
+  <line x1="30" y1="25" x2="30" y2="65"
         stroke="#FFFEF7" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
