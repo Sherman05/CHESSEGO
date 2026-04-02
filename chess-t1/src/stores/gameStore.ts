@@ -72,7 +72,7 @@ function buildIndicator(moveNumber: number, turn: PieceColor): string {
   if (turn === PieceColor.WHITE) {
     return `${moveNumber}. __ хб`;
   } else {
-    return `${moveNumber} … __ хч`;
+    return `${moveNumber} ... __ хч`;
   }
 }
 
