@@ -1,14 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
-  <!-- Ver Knekht Black: Trapezoid body + small triangle top + 1 vertical line -->
-  <!-- Triangle top -->
-  <path d="M 25,5 L 20,18 L 40,18 L 35,5 Z"
+  <!-- Ver Knekht Black (ВК): trapezoid body + triangle navershie + 1 center line -->
+  <path d="M 25,8 L 30,2 L 35,8 Z"
         fill="#000000" stroke="#411B1A" stroke-width="2.5"
         stroke-linejoin="round" stroke-linecap="round"/>
-  <!-- Trapezoid body -->
-  <path d="M 13,72 L 18,20 L 42,20 L 47,72 Z"
+  <path d="M 18,70 L 22,24 L 38,24 L 42,70 Z"
         fill="#000000" stroke="#411B1A" stroke-width="2.5"
         stroke-linejoin="round" stroke-linecap="round"/>
-  <!-- Center vertical line -->
-  <line x1="30" y1="30" x2="30" y2="65"
+  <line x1="30" y1="28" x2="30" y2="62"
         stroke="#FFFEF7" stroke-width="2.5" stroke-linecap="round"/>
 </svg>
