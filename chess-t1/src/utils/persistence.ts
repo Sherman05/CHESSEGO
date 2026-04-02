@@ -3,7 +3,7 @@ import type { Piece, BoardState } from '../logic/pieces';
 import type { GameMode, GameStage } from '../stores/gameStore';
 import { PieceColor } from '../logic/pieces';
 
-const SESSION_KEY = 'chess-t1-session';
+const SESSION_FILE = 'chess-t1-session.json';
 const INTRO_KEY = 'chess-t1-intro-skipped';
 
 interface SavedSession {
@@ -16,7 +16,11 @@ interface SavedSession {
   indicator: string;
 }
 
-export function saveSession(
+async function isTauri(): Promise<boolean> {
+  return typeof window !== 'undefined' && '__TAURI__' in window;
+}
+
+export async function saveSession(
   board: BoardState,
   currentTurn: PieceColor,
   moveNumber: number,
@@ -34,25 +38,62 @@ export function saveSession(
     partyFolder,
     indicator,
   };
+
   try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+    if (await isTauri()) {
+      const { writeTextFile, mkdir, exists } = await import('@tauri-apps/plugin-fs');
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
+      const dir = await appDataDir();
+      if (!(await exists(dir))) {
+        await mkdir(dir, { recursive: true });
+      }
+      const path = await join(dir, SESSION_FILE);
+      await writeTextFile(path, JSON.stringify(data));
+    } else {
+      localStorage.setItem(SESSION_FILE, JSON.stringify(data));
+    }
   } catch (e) {
     console.error('Failed to save session:', e);
+    // Fallback to localStorage
+    try { localStorage.setItem(SESSION_FILE, JSON.stringify(data)); } catch {}
   }
 }
 
-export function loadSession(): SavedSession | null {
+export async function loadSession(): Promise<SavedSession | null> {
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as SavedSession;
+    if (await isTauri()) {
+      const { readTextFile, exists } = await import('@tauri-apps/plugin-fs');
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
+      const dir = await appDataDir();
+      const path = await join(dir, SESSION_FILE);
+      if (await exists(path)) {
+        const raw = await readTextFile(path);
+        return JSON.parse(raw) as SavedSession;
+      }
+    } else {
+      const raw = localStorage.getItem(SESSION_FILE);
+      if (raw) return JSON.parse(raw) as SavedSession;
+    }
   } catch {
-    return null;
+    // Fallback
+    try {
+      const raw = localStorage.getItem(SESSION_FILE);
+      if (raw) return JSON.parse(raw) as SavedSession;
+    } catch {}
   }
+  return null;
 }
 
-export function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
+export async function clearSession() {
+  try {
+    if (await isTauri()) {
+      const { remove, exists } = await import('@tauri-apps/plugin-fs');
+      const { appDataDir, join } = await import('@tauri-apps/api/path');
+      const path = await join(await appDataDir(), SESSION_FILE);
+      if (await exists(path)) await remove(path);
+    }
+  } catch {}
+  try { localStorage.removeItem(SESSION_FILE); } catch {}
 }
 
 export function setIntroSkipped(skipped: boolean) {

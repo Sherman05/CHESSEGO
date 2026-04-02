@@ -1,0 +1,46 @@
+name: Build Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/chess-t1-desktop-app-XO9Mt']
+    paths:
+      - 'chess-t1/src/**'
+      - 'chess-t1/src-tauri/**'
+      - 'chess-t1/package.json'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        working-directory: chess-t1
+        run: npm install
+
+      - name: Build Tauri app
+        working-directory: chess-t1
+        run: npx tauri build
+
+      - name: Upload MSI installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: chess-T1-windows-msi
+          path: chess-t1/src-tauri/target/release/bundle/msi/*.msi
+
+      - name: Upload NSIS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: chess-T1-windows-exe
+          path: chess-t1/src-tauri/target/release/bundle/nsis/*.exe

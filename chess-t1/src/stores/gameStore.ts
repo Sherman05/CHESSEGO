@@ -60,6 +60,8 @@ interface GameState {
   completePromotion: (piece: Piece) => void;
   setSelectedForDeletion: (sq: Square | null) => void;
   deleteSelectedPiece: () => void;
+  trayPieceSelected: Piece | null;
+  setTrayPieceSelected: (piece: Piece | null) => void;
   setShowIntro: (show: boolean) => void;
   setIntroSkipped: (skipped: boolean) => void;
   setSavedSession: (saved: boolean) => void;
@@ -88,6 +90,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   historyIndex: -1,
   promotionPending: null,
   selectedForDeletion: null,
+  trayPieceSelected: null,
   moveIndicator: '',
   introSkipped: false,
   showIntro: true,
@@ -184,6 +187,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       moveIndicator: indicator,
       promotionPending: null,
       selectedForDeletion: null,
+      trayPieceSelected: null,
     });
   },
 
@@ -201,6 +205,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       promotionPending: null,
       selectedForDeletion: null,
       partyFolder: null,
+      trayPieceSelected: null,
     });
   },
 
@@ -237,6 +242,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       promotionPending: null,
       selectedForDeletion: null,
       partyFolder: null,
+      trayPieceSelected: null,
     });
   },
 
@@ -310,6 +316,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     board.delete(state.selectedForDeletion);
     set({ board, selectedForDeletion: null });
   },
+
+  setTrayPieceSelected: (piece) => set({ trayPieceSelected: piece }),
 
   setShowIntro: (show) => set({ showIntro: show }),
   setIntroSkipped: (skipped) => set({ introSkipped: skipped }),

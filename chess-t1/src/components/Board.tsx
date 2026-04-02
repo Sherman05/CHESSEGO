@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { useGameStore, getViewMode } from '../stores/gameStore';
+import { useGameStore } from '../stores/gameStore';
 import { FILES, RANKS, Square, toSquare, isCastle, PieceColor, PieceType, boardToSerializable } from '../logic/pieces';
 import type { Piece } from '../logic/pieces';
 import PieceComponent, { getPieceSvg } from './Piece';
@@ -24,7 +24,8 @@ const COLORS = {
 
 function isLightSquare(file: string, rank: number): boolean {
   const fileIdx = FILES.indexOf(file as typeof FILES[number]);
-  return (fileIdx + rank) % 2 !== 0;
+  // a1 must be dark (black): fileIdx=0 + rank=1 = odd → dark
+  return (fileIdx + rank) % 2 === 0;
 }
 
 interface DragState {
@@ -47,20 +48,28 @@ const Board: React.FC = () => {
     setPromotionPending,
   } = useGameStore();
 
-  const viewMode = getViewMode({ gameMode, gameStage });
+  // viewMode used indirectly via isSetup
 
-  // Responsive sizing
+  // Responsive sizing — use ResizeObserver for reliable parent tracking
   useEffect(() => {
-    const handleResize = () => {
+    const updateSize = () => {
       if (boardRef.current?.parentElement) {
         const parent = boardRef.current.parentElement;
         const maxSize = Math.min(parent.clientWidth - 20, parent.clientHeight - 20);
         setContainerSize(Math.max(300, maxSize));
       }
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    updateSize();
+
+    const parent = boardRef.current?.parentElement;
+    if (parent && typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(updateSize);
+      ro.observe(parent);
+      return () => ro.disconnect();
+    } else {
+      window.addEventListener('resize', updateSize);
+      return () => window.removeEventListener('resize', updateSize);
+    }
   }, []);
 
   const notationSize = containerSize * 0.035;
@@ -125,10 +134,11 @@ const Board: React.FC = () => {
     if (!targetSq) {
       // Check if we have a last hovered square to snap to
       if (dragState.hoveredSquare && dragState.hoveredSquare !== dragState.fromSquare) {
-        // Snap to last hovered square (between-cells case)
         const snapSq = dragState.hoveredSquare;
         const snapTarget = board.get(snapSq);
-        if (!snapTarget || snapTarget.color !== dragState.piece.color) {
+        // Can't snap to own piece or to King
+        if ((!snapTarget || snapTarget.color !== dragState.piece.color) &&
+            !(snapTarget && snapTarget.type === PieceType.KING)) {
           movePiece(dragState.fromSquare, snapSq);
           setDragState(null);
           return;
@@ -232,7 +242,7 @@ const Board: React.FC = () => {
     }
 
     setDragState(null);
-  }, [dragState, board, movePiece, removePiece, getSquareFromPos, viewMode, setSelectedForDeletion, setPromotionPending]);
+  }, [dragState, board, movePiece, removePiece, getSquareFromPos, setPromotionPending]);
 
   // Handle click for piece selection (for deletion)
   const handleClick = useCallback((e: React.MouseEvent) => {
@@ -258,6 +268,14 @@ const Board: React.FC = () => {
     if (e.button !== 0 || gameStage !== 'setup') return;
     const sq = getSquareFromPos(e.clientX, e.clientY);
     if (!sq) return;
+
+    // If a tray piece is selected, place it on click
+    const { trayPieceSelected, placePiece: storePlacePiece } = useGameStore.getState();
+    if (trayPieceSelected) {
+      storePlacePiece(sq, trayPieceSelected);
+      // Don't deselect — allow placing multiple of the same piece
+      return;
+    }
 
     const piece = board.get(sq);
     if (!piece) return;
@@ -295,17 +313,24 @@ const Board: React.FC = () => {
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (gameStage !== 'setup') return;
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
   }, [gameStage]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     if (gameStage !== 'setup') return;
     e.preventDefault();
-    const data = e.dataTransfer.getData('application/json');
+    e.stopPropagation();
+
+    // Try to get piece data from multiple formats
+    let data = e.dataTransfer.getData('application/json');
+    if (!data) data = e.dataTransfer.getData('text/plain');
+    if (!data) data = e.dataTransfer.getData('text');
     if (!data) return;
 
     try {
       const piece = JSON.parse(data) as Piece;
+      if (!piece.type || !piece.color) return;
       const sq = getSquareFromPos(e.clientX, e.clientY);
       if (sq) {
         const { placePiece } = useGameStore.getState();
@@ -418,7 +443,7 @@ const Board: React.FC = () => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {/* Outer border */}
+      {/* Outer border — pointerEvents none so drops pass through */}
       <div style={{
         position: 'absolute',
         inset: 0,

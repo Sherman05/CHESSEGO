@@ -56,7 +56,9 @@ const TopBar: React.FC<TopBarProps> = ({ onPartyClick, onAnalysisClick, onMinimi
       backgroundColor: '#B8C0C8',
       minHeight: 38,
       flexShrink: 0,
-    }}>
+    }}
+    data-tauri-drag-region
+    >
       {/* Нач.расстановка — rectangular text button with small chess icon per screenshot */}
       <button
         style={{

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface CloseDialogProps {
   hasActiveSession: boolean;
@@ -11,11 +11,23 @@ const CloseDialog: React.FC<CloseDialogProps> = ({ hasActiveSession, onCloseWith
   const [saveWithEnd, setSaveWithEnd] = useState(true);
   const [saveWithoutEnd, setSaveWithoutEnd] = useState(true);
 
-  if (!hasActiveSession) {
-    // No active session - just close
-    onCloseWithEnd(false);
-    return null;
-  }
+  // If no active session, close immediately via effect (not during render)
+  useEffect(() => {
+    if (!hasActiveSession) {
+      onCloseWithEnd(false);
+    }
+  }, [hasActiveSession, onCloseWithEnd]);
+
+  // Close on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onCancel]);
+
+  if (!hasActiveSession) return null;
 
   return (
     <div style={{
