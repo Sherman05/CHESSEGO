@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
-  <!-- Knekht Black (Кн): SMALLEST, simple trapezoid, NO navershie, NO lines -->
-  <path d="M 20,68 L 24,22 L 36,22 L 40,68 Z"
-        fill="#000000" stroke="#411B1A" stroke-width="2.5"
-        stroke-linejoin="round" stroke-linecap="round"/>
-</svg>

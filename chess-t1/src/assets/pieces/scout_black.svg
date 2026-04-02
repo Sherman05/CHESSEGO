@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80">
-  <!-- Scout Black (Рк): pentagon body + NO navershie + NO lines + side protrusion -->
-  <path d="M 15,72 L 10,30 L 30,12 L 50,30 L 45,72 Z"
-        fill="#000000" stroke="#411B1A" stroke-width="2.5"
-        stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M 46,42 L 56,50 L 46,58 Z"
-        fill="#000000" stroke="#411B1A" stroke-width="2.5"
-        stroke-linejoin="round" stroke-linecap="round"/>
-</svg>
