@@ -1,0 +1,270 @@
+{
+  "format": "transparent-png-atlas",
+  "atlas_file": "pieces_atlas.png",
+  "atlas_size": {
+    "width": 320,
+    "height": 1400
+  },
+  "cell_size": {
+    "width": 160,
+    "height": 200
+  },
+  "piece_order_rows": [
+    "king",
+    "connet",
+    "prince",
+    "ritter",
+    "knet",
+    "ver_knet",
+    "scout"
+  ],
+  "colors_columns": [
+    "white",
+    "black"
+  ],
+  "pieces": [
+    {
+      "id": "king_white",
+      "name": "king",
+      "name_ru": "Король",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 0
+      },
+      "frame": {
+        "x": 23,
+        "y": 13,
+        "width": 113,
+        "height": 174
+      },
+      "source_file": "king_white.png"
+    },
+    {
+      "id": "king_black",
+      "name": "king",
+      "name_ru": "Король",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 0
+      },
+      "frame": {
+        "x": 169,
+        "y": 9,
+        "width": 141,
+        "height": 181
+      },
+      "source_file": "king_black.png"
+    },
+    {
+      "id": "connet_white",
+      "name": "connet",
+      "name_ru": "Коннет",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 1
+      },
+      "frame": {
+        "x": 22,
+        "y": 214,
+        "width": 116,
+        "height": 172
+      },
+      "source_file": "connet_white.png"
+    },
+    {
+      "id": "connet_black",
+      "name": "connet",
+      "name_ru": "Коннет",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 1
+      },
+      "frame": {
+        "x": 169,
+        "y": 214,
+        "width": 142,
+        "height": 172
+      },
+      "source_file": "connet_black.png"
+    },
+    {
+      "id": "prince_white",
+      "name": "prince",
+      "name_ru": "Принц",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 2
+      },
+      "frame": {
+        "x": 19,
+        "y": 418,
+        "width": 121,
+        "height": 164
+      },
+      "source_file": "prince_white.png"
+    },
+    {
+      "id": "prince_black",
+      "name": "prince",
+      "name_ru": "Принц",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 2
+      },
+      "frame": {
+        "x": 172,
+        "y": 415,
+        "width": 136,
+        "height": 169
+      },
+      "source_file": "prince_black.png"
+    },
+    {
+      "id": "ritter_white",
+      "name": "ritter",
+      "name_ru": "Риттер",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 3
+      },
+      "frame": {
+        "x": 22,
+        "y": 618,
+        "width": 115,
+        "height": 164
+      },
+      "source_file": "ritter_white.png"
+    },
+    {
+      "id": "ritter_black",
+      "name": "ritter",
+      "name_ru": "Риттер",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 3
+      },
+      "frame": {
+        "x": 180,
+        "y": 618,
+        "width": 119,
+        "height": 163
+      },
+      "source_file": "ritter_black.png"
+    },
+    {
+      "id": "knet_white",
+      "name": "knet",
+      "name_ru": "Кнет",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 4
+      },
+      "frame": {
+        "x": 20,
+        "y": 815,
+        "width": 120,
+        "height": 170
+      },
+      "source_file": "knet_white.png"
+    },
+    {
+      "id": "knet_black",
+      "name": "knet",
+      "name_ru": "Кнет",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 4
+      },
+      "frame": {
+        "x": 158,
+        "y": 814,
+        "width": 164,
+        "height": 172
+      },
+      "source_file": "knet_black.png"
+    },
+    {
+      "id": "ver_knet_white",
+      "name": "ver_knet",
+      "name_ru": "Вер Кнет",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 5
+      },
+      "frame": {
+        "x": 25,
+        "y": 1018,
+        "width": 109,
+        "height": 163
+      },
+      "source_file": "ver_knet_white.png"
+    },
+    {
+      "id": "ver_knet_black",
+      "name": "ver_knet",
+      "name_ru": "Вер Кнет",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 5
+      },
+      "frame": {
+        "x": 182,
+        "y": 1018,
+        "width": 116,
+        "height": 164
+      },
+      "source_file": "ver_knet_black.png"
+    },
+    {
+      "id": "scout_white",
+      "name": "scout",
+      "name_ru": "Разведчик",
+      "color": "white",
+      "cell": {
+        "column": 0,
+        "row": 6
+      },
+      "frame": {
+        "x": 25,
+        "y": 1222,
+        "width": 110,
+        "height": 155
+      },
+      "source_file": "scout_white.png"
+    },
+    {
+      "id": "scout_black",
+      "name": "scout",
+      "name_ru": "Разведчик",
+      "color": "black",
+      "cell": {
+        "column": 1,
+        "row": 6
+      },
+      "frame": {
+        "x": 173,
+        "y": 1213,
+        "width": 133,
+        "height": 174
+      },
+      "source_file": "scout_black.png"
+    }
+  ],
+  "notes": [
+    "Assets were extracted from the generated sheet in this chat.",
+    "Each individual PNG has transparent background.",
+    "Coordinates in frame are pixel-based and use top-left origin."
+  ]
+}
