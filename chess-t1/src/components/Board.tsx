@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { FILES, RANKS, Square, toSquare, isCastle, PieceColor, PieceType, boardToSerializable } from '../logic/pieces';
+import { FILES, RANKS, Square, toSquare, parseSquare, isCastle, PieceColor, PieceType, boardToSerializable } from '../logic/pieces';
 import type { Piece } from '../logic/pieces';
 import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
@@ -136,8 +136,14 @@ const Board: React.FC = () => {
       if (dragState.hoveredSquare && dragState.hoveredSquare !== dragState.fromSquare) {
         const snapSq = dragState.hoveredSquare;
         const snapTarget = board.get(snapSq);
-        // Can't snap to own piece or to King
-        if ((!snapTarget || snapTarget.color !== dragState.piece.color) &&
+        // Can't snap to own piece, King, or violate Knekht rank restriction
+        const snapRank = parseSquare(snapSq).rank;
+        const knekhtBlocked = dragState.piece.type === PieceType.KNEKHT && (
+          (dragState.piece.color === PieceColor.WHITE && snapRank >= 7) ||
+          (dragState.piece.color === PieceColor.BLACK && snapRank <= 2)
+        );
+        if (!knekhtBlocked &&
+            (!snapTarget || snapTarget.color !== dragState.piece.color) &&
             !(snapTarget && snapTarget.type === PieceType.KING)) {
           movePiece(dragState.fromSquare, snapSq);
           setDragState(null);
@@ -175,6 +181,21 @@ const Board: React.FC = () => {
       // Can't place on own piece - snap back
       setDragState(null);
       return;
+    }
+
+    // Knekht movement restrictions: cannot skip promotion rank
+    // White Knekht cannot go to ranks 7 or 8 (must promote at rank 6 first)
+    // Black Knekht cannot go to ranks 2 or 1 (must promote at rank 3 first)
+    if (dragState.piece.type === PieceType.KNEKHT) {
+      const targetRank = parseSquare(targetSq).rank;
+      if (dragState.piece.color === PieceColor.WHITE && targetRank >= 7) {
+        setDragState(null);
+        return;
+      }
+      if (dragState.piece.color === PieceColor.BLACK && targetRank <= 2) {
+        setDragState(null);
+        return;
+      }
     }
 
     // Kings cannot be captured
