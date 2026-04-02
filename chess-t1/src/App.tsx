@@ -76,20 +76,21 @@ const App: React.FC = () => {
     try {
       const { getCurrentWindow } = await import('@tauri-apps/api/window');
       await getCurrentWindow().minimize();
-    } catch {
-      // dev mode fallback
+    } catch (e) {
+      console.error('minimize failed:', e);
     }
   }, []);
 
   const handleAlwaysOnTop = useCallback(async () => {
-    toggleAlwaysOnTop();
     try {
       const { getCurrentWindow } = await import('@tauri-apps/api/window');
       const win = getCurrentWindow();
       const current = await win.isAlwaysOnTop();
       await win.setAlwaysOnTop(!current);
-    } catch {
-      // fallback
+      toggleAlwaysOnTop();
+    } catch (e) {
+      console.error('setAlwaysOnTop failed:', e);
+      toggleAlwaysOnTop();
     }
   }, [toggleAlwaysOnTop]);
 
