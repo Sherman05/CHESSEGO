@@ -24,7 +24,8 @@ const COLORS = {
 
 function isLightSquare(file: string, rank: number): boolean {
   const fileIdx = FILES.indexOf(file as typeof FILES[number]);
-  return (fileIdx + rank) % 2 !== 0;
+  // a1 must be dark (black): fileIdx=0 + rank=1 = odd → dark
+  return (fileIdx + rank) % 2 === 0;
 }
 
 interface DragState {
