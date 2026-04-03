@@ -198,7 +198,7 @@ describe('gameStore', () => {
     it('shows correct format for black turn', () => {
       useGameStore.getState().startParty('test');
       useGameStore.getState().movePiece('a2', 'a3');
-      expect(useGameStore.getState().moveIndicator).toBe('1 ... __ хч');
+      expect(useGameStore.getState().moveIndicator).toBe('1. … __ хч');
     });
 
     it('increments move number correctly', () => {

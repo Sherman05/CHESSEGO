@@ -82,15 +82,14 @@ const App: React.FC = () => {
   }, []);
 
   const handleAlwaysOnTop = useCallback(async () => {
+    const newState = !useGameStore.getState().alwaysOnTop;
+    toggleAlwaysOnTop();
     try {
       const { getCurrentWindow } = await import('@tauri-apps/api/window');
       const win = getCurrentWindow();
-      const current = await win.isAlwaysOnTop();
-      await win.setAlwaysOnTop(!current);
-      toggleAlwaysOnTop();
+      await win.setAlwaysOnTop(newState);
     } catch (e) {
       console.error('setAlwaysOnTop failed:', e);
-      toggleAlwaysOnTop();
     }
   }, [toggleAlwaysOnTop]);
 
