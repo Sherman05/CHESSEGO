@@ -82,14 +82,20 @@ const App: React.FC = () => {
   }, []);
 
   const handleAlwaysOnTop = useCallback(async () => {
-    const newState = !useGameStore.getState().alwaysOnTop;
-    toggleAlwaysOnTop();
     try {
       const { getCurrentWindow } = await import('@tauri-apps/api/window');
       const win = getCurrentWindow();
-      await win.setAlwaysOnTop(newState);
+      // Read current state directly from window, not from store
+      const isCurrentlyOnTop = await win.isAlwaysOnTop();
+      await win.setAlwaysOnTop(!isCurrentlyOnTop);
+      // Only update store after Tauri API succeeds
+      if (useGameStore.getState().alwaysOnTop === isCurrentlyOnTop) {
+        toggleAlwaysOnTop();
+      }
     } catch (e) {
       console.error('setAlwaysOnTop failed:', e);
+      // Still toggle store for visual feedback even if API fails
+      toggleAlwaysOnTop();
     }
   }, [toggleAlwaysOnTop]);
 

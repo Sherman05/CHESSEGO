@@ -6,15 +6,15 @@ import PieceComponent, { getPieceSvg } from './Piece';
 import { checkPromotion } from '../logic/promotion';
 import { checkScoutCapture } from '../logic/scout';
 
-// Design colors — matched to screenshot pixel-perfect
+// Design colors — black/white board frame per user request
 const COLORS = {
   lightSquare: '#FFFFFF',
   darkSquare: '#808080',
   castleSquare: '#C0C0C0',
-  border: '#4A90D9',               // Blue frame — per screenshot
-  borderOuter: '#2E6AB0',          // Outer edge slightly darker
-  notationBg: '#4A90D9',           // Blue background for notation area
-  notationText: '#FFFFFF',         // White text on blue
+  border: '#1a1a1a',               // Black frame
+  borderOuter: '#000000',          // Black outer edge
+  notationBg: '#e0e0e0',           // Light gray notation background
+  notationText: '#000000',         // Black text
   highlightStart: 'rgba(144, 208, 128, 0.5)',
   highlightHover: 'rgba(144, 208, 128, 0.35)',
   highlightLastMove: 'rgba(240, 232, 128, 0.3)',
